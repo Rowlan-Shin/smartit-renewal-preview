@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>학부소개 · 세명대학교 스마트IT학부</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,500;125,600;125,700&display=block">
+<link rel="preload" href="../fonts/pretendard-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/pretendard-500.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/pretendard-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/pretendard-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/pretendard-800.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="sub.css">
+<meta name="theme-color" content="#03080b">
+<style>@view-transition { navigation: auto; } @media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }</style>
+<script>
+// 웹 1차본 연결 장치 05(피드백 6, 10-17 — tools/build_site.py가 단다): 메인에서 넘어올 때만 이 쪽 전체가 아래에서 올라온다(sub.css vt-up). 서브끼리는 전환하지 않는다
+// 세션 17(10-17) 게시 틀 보정 — claude.ai 아티팩트 틀에서만 생기던 결함(설명 = 메인 머리 스크립트 — 1차본 main.html, 원본 proto-07-zoom/index.html):
+//  ① 틀의 스크롤 기억 sessionStorage '__frame_scroll'(쪽과 상관없이 높이 하나)을 틀이 읽기 전에 지운다 — 메인 높이가 옮겨져 이 쪽이 맨 아래부터 보였다
+//  ② 틀은 no-referrer라 주소로 '메인에서 왔는지'를 못 가린다 → 떠나는 쪽이 남긴 표 'smit.from'(15초 안)을 쓰고, 이 쪽을 떠날 때 {k: 'sub'}를 남긴다
+try { sessionStorage.removeItem('__frame_scroll'); } catch (err) { }
+const vtFrom = () => { try { const f = JSON.parse(sessionStorage.getItem('smit.from') || 'null'); sessionStorage.removeItem('smit.from'); return f && Date.now() - f.t < 15000 ? f.k : ''; } catch (err) { return ''; } };
+const vtMark = () => { try { sessionStorage.setItem('smit.from', JSON.stringify({ k: 'sub', t: Date.now() })); } catch (err) { } };
+let vtHanded = vtFrom();   // 떠난 쪽 표('main' | 'sub' | '') — 처음 열 때 한 번 읽고 지운다
+// 세션 18(검증 3라운드 GPT 권고): 이 쪽에서 마지막으로 쓴 입력 방식을 남긴다 → 메인으로 뒤로 돌아오면 그 방식을 이어받는다(메인 머리 스크립트 — 포커스·테두리를 돌려줄지)
+// 키보드로 세는 키는 메인과 같다: Tab · Enter · 버튼·링크 위 Space(검증 4라운드 GPT·Opus — 서브만 Space를 안 셌다)
+addEventListener('pointerdown', () => { try { sessionStorage.setItem('smit.inp', 'pointer'); } catch (err) { } }, true);
+addEventListener('keydown', e => {
+  const t = e.target, ctl = t && t.closest && t.closest('a[href], button, summary, [role="button"], [tabindex]:not([tabindex="-1"])');
+  if (e.key === 'Tab' || e.key === 'Enter' || (e.key === ' ' && ctl)) try { sessionStorage.setItem('smit.inp', 'key'); } catch (err) { }
+}, true);
+addEventListener('pageswap', () => vtMark()); addEventListener('pagehide', () => vtMark());
+document.addEventListener('click', e => {   // 누르는 순간에도 남긴다(pageswap보다 먼저) — 새 창 열기(가운데 단추·Ctrl·Shift 등)·다른 사이트는 빼고
+  const a = e.target.closest ? e.target.closest('a[href]') : null;
+  if (a && e.button === 0 && !(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) && (!a.target || a.target === '_self') && a.origin === location.origin) vtMark();
+}, true);
+let bfRestored = false;   // 뒤로·앞으로 캐시(bfcache)에서 되살아남 — pageshow(persisted)가 pagereveal보다 먼저 온다. 그때는 떠난 쪽 표를 새로 읽는다
+addEventListener('pageshow', e => { if (e.persisted) { bfRestored = true; vtHanded = vtFrom(); } });
+addEventListener('pagereveal', e => {
+  if (!e.viewTransition) return;
+  let from = '', main = false;
+  try {
+    const a = window.navigation && navigation.activation;
+    if (a) from = a.from ? a.from.url : '';
+    else { const n = performance.getEntriesByType('navigation')[0]; if (!(n && n.type === 'back_forward') && !bfRestored) from = document.referrer; }   // Navigation API가 없으면 이력 이동(새로 연 쪽·bfcache 되살림)의 referrer는 직전 쪽이 아닐 수 있어 전환하지 않는다(GPT 검수 R-01 · 2라운드)
+  } catch (err) { }
+  bfRestored = false;
+  try { const u = new URL(from); main = u.origin === location.origin && !/\/sub\//.test(u.pathname); } catch (err) { }
+  if (!from && vtHanded === 'main') main = true;   // 게시 틀 보정 ②: 주소가 비면(no-referrer 틀 · 이력 이동) 떠난 쪽이 남긴 표로
+  window.__vt = { main, t: Math.round(performance.now()) };   // 시험용(tools/test_site.py · capture_transition.py): t = 이 쪽 열기 시작부터 공개까지(ms)
+  if (!main) { e.viewTransition.ready.catch(() => {}); e.viewTransition.skipTransition(); return; }   // 건너뛰면 ready가 거부된다 — 받아 두어 콘솔 오류를 내지 않는다
+  document.documentElement.classList.add('vt-up');
+  e.viewTransition.finished.finally(() => document.documentElement.classList.remove('vt-up'));
+});
+</script>
+</head>
+<!-- 시안 9 서브 화면 1/3: 학부소개(글형). 피드백 8(2026-10-18): 4분야(AI·통신·보안·드론) 중심 지원 유도 글로 새로 씀(사용자 지시).
+     옛 본문 = 현행 학부소개 원문(https://www.semyung.ac.kr/smartit/sub01_05.do, 최종수정일 2025-09-03) — 백업 _backup/s20/about.html. 새 문장 근거 = 01_기획/피드백8-문구대조-2026-10-18.md -->
+<body data-page="about">
+<a class="skip" href="#main">본문 바로가기</a>
+<section class="band" aria-label="머리 띠">
+  <img class="bg-full" src="media/band_bg_ch1.jpg" alt="" aria-hidden="true">
+  <div class="stage" aria-hidden="true">
+    <img class="st-bg" src="media/band_bg_ch1.jpg" alt="">
+    <img class="st-glass" src="media/band_glass_ch1.webp" alt="">
+    <video class="st-sweep" id="st-sweep" src="media/band_sweep.mp4" muted loop autoplay playsinline preload="auto"></video>
+  </div>
+  <div class="shade" aria-hidden="true"></div>
+  <header class="top">
+    <a class="brand" href="../main.html"><small>세명대학교</small><b>스마트IT학부</b></a>
+<!--GNB:BEGIN-->
+    <nav class="gnb" aria-label="주 메뉴">
+      <a href="about.html" aria-current="page">SMIT 소개</a>
+      <a href="goal.html">SMIT 교육</a>
+      <a href="employ.html">SMIT 취업</a>
+      <a href="notice.html">SMIT 소식</a>
+      <a href="admission.html">SMIT 입학</a>
+    </nav>
+<!--GNB:END-->
+    <button class="menu-btn" type="button">메뉴</button>
+  </header>
+  <div class="title">
+    <a class="kicker" href="../main.html#about" title="메인 01 SMIT 소개 장으로"><b>01</b><span class="k-t"><span class="k-ko">SMIT 소개</span><span class="k-sep"> · </span><span class="k-en">About</span></span></a>
+    <h1>학부소개</h1>
+    <div class="t-line" aria-hidden="true"></div>
+    <p class="crumb"><a href="../main.html">HOME</a> › SMIT 소개 › 학부소개</p>
+  </div>
+</section>
+
+<div class="paper">
+  <div class="wrap">
+<!--LNB:BEGIN-->
+    <nav class="lnb" aria-label="SMIT 소개 하위 메뉴">
+      <h2>SMIT 소개</h2>
+      <ul>
+        <li class="on"><a href="about.html" aria-current="page">학부소개</a></li>
+        <li><a href="greeting.html">학부장 인사말</a></li>
+        <li><a href="history.html">학부연혁</a></li>
+        <li><a href="faculty.html">교수소개</a></li>
+      </ul>
+    </nav>
+<!--LNB:END-->
+
+    <main class="main" id="main">
+      <article>
+        <!-- 피드백 8(10-18, 사용자): 히어로의 4분야(AI·통신·보안·드론) 중심으로 지원하고 싶게 새로 씀. 사실은 현행 원문에서만 —
+             문장마다 근거 = 01_기획/피드백8-문구대조-2026-10-18.md(교육과정·체계도·학부소개·진로와 취업·연혁·교수소개·대학 커뮤니티 시행안내).
+             공식 특성화는 3분야(인공지능 응용·소프트웨어 개발·차세대 정보통신)라 4분야를 '특성화'라고 부르지 않는다('4개 분야' — 10-18 사용자 결정). 취업률 수치는 쓰지 않는다(10-18 사용자 결정).
+             피드백 9(10-18): '현장과 연구를 아는 교수진' 칸을 사람별 나열에서 교수진 역량 한 줄로 묶음 — 근거 01_기획/피드백9-문구대조-2026-10-18.md -->
+        <section class="sec" aria-labelledby="s1">
+          <h2 class="sec-h" id="s1">AI·통신·보안·드론, 4개&nbsp;분야를 한 학부에서 배웁니다</h2>
+          <div class="prose">
+            <p class="lead">인공지능은 데이터에서 배우고, 세상의 사물은 네트워크로 연결되고 있습니다. 연결이 늘수록 시스템과 데이터를 지키는 보안이 중요해지고, 드론과 자율주행 같은 스마트 모빌리티가 새 산업으로 자랍니다.</p>
+            <p>스마트IT학부는 이 흐름의 중심인 <strong>AI·통신·보안·드론</strong> 4개 분야를 한 학부에서 가르칩니다. 1학년에 코딩과 인공지능 기초를 다지고, 2학년부터 분야별 실습 과목을 차례로 배우며, 3·4학년에는 캡스톤디자인 졸업작품과 ICT 기업 현장실습으로 실무를 경험합니다.</p>
+          </div>
+          <ul class="fields4" aria-label="4개 분야">
+            <li class="f-ai">
+              <h3><span>AI</span>인공지능</h3>
+              <p class="f-lede">데이터에서 배우는 지능형 소프트웨어를 직접 설계하고 만듭니다.</p>
+              <dl>
+                <div><dt>대표 과목</dt><dd>인공지능첫걸음(1학년) · 빅데이터기초및실습(2학년) · 기계학습프레임워크(3학년) · AI응용플랫폼실습(4학년)</dd></div>
+                <div><dt>자격증</dt><dd>AWS/MS Azure/IBM 머신러닝 및 AI응용 개발 전문가 · 빅데이터분석기사</dd></div>
+                <div><dt>진로</dt><dd>머신러닝/딥러닝 개발자 · 빅데이터 엔지니어 · 인공지능대학원 진학</dd></div>
+              </dl>
+              <a class="f-go" href="../main.html#ai">AI 4년 로드맵 보기</a>
+            </li>
+            <li class="f-comm">
+              <h3><span>NETWORK</span>통신</h3>
+              <p class="f-lede">사물과 사람을 잇는 차세대 네트워크와 이동통신을 다룹니다.</p>
+              <dl>
+                <div><dt>대표 과목</dt><dd>기초네트워킹이론및실습(2학년, CCNA) · 통신이론및실습(3학년) · 차세대이동통신(4학년, 5G)</dd></div>
+                <div><dt>자격증</dt><dd>CCNA/CCNP · 네트워크관리사 · 정보통신기사</dd></div>
+                <div><dt>진로</dt><dd>사물인터넷(IoT) 시스템 개발자 · 네트워크·데이터통신 엔지니어 · 차세대 통신(5G/6G) 개발자</dd></div>
+              </dl>
+              <a class="f-go" href="../main.html#comm">통신 4년 로드맵 보기</a>
+            </li>
+            <li class="f-sec">
+              <h3><span>SECURITY</span>보안</h3>
+              <p class="f-lede">연결된 시스템과 데이터를 지키는 정보보호 기술을 익힙니다.</p>
+              <dl>
+                <div><dt>대표 과목</dt><dd>리눅스기초(2학년, 서버 구축·보안 실무) · 정보보호이론및실습(3학년) · 인공지능사이버보안(4학년)</dd></div>
+                <div><dt>자격증</dt><dd>정보보안기사</dd></div>
+                <div><dt>진로</dt><dd>보안 전문가 · 정보보호 개발자 · 네트워크/보안 엔지니어 · 정보보호 전문대학원 진학</dd></div>
+              </dl>
+              <a class="f-go" href="../main.html#security">보안 4년 로드맵 보기</a>
+            </li>
+            <li class="f-drone">
+              <h3><span>DRONE</span>드론</h3>
+              <p class="f-lede">하늘을 나는 컴퓨터, 드론을 코딩하고 자율 이동을 연구합니다.</p>
+              <dl>
+                <div><dt>대표 과목</dt><dd>드론기초및코딩실습(2학년) · 스마트모빌리티인공지능실습(4학년)</dd></div>
+                <div><dt>자격증</dt><dd>초경량비행장치 무인멀티콥터 조종자격증</dd></div>
+                <div><dt>진로</dt><dd>드론·자율주행차 운용 소프트웨어 개발자 · 드론·자율주행차·의료 및 헬스케어 인공지능응용 개발자</dd></div>
+              </dl>
+              <a class="f-go" href="../main.html#drone">드론 4년 로드맵 보기</a>
+            </li>
+          </ul>
+          <div class="base-sw">
+            <h3>모든 분야의 바탕, 소프트웨어</h3>
+            <p>1학년 C언어및실습·파이썬프로그래밍실습으로 시작해 리눅스와 데이터베이스까지 함께 배웁니다. 웹/앱 개발자, AR/VR 콘텐츠 개발자, DB 엔지니어, 게임 개발자로도 나아갑니다.</p>
+          </div>
+        </section>
+
+        <section class="sec" aria-labelledby="s2">
+          <h2 class="sec-h" id="s2">스마트IT학부에서 4년을 보내면</h2>
+          <dl class="duo">
+            <div><dt>장비로 배우는 실습 수업</dt><dd>인공지능·드론·자율주행차·AR/VR 첨단 실습 장비와 실습실에서 재미있게 프로그래밍을 배웁니다. 이론 교육과 실험·실습을 함께 강화한 교육과정입니다.</dd></div>
+            <div><dt>졸업작품과 현장실습</dt><dd>3·4학년 캡스톤디자인에서 졸업작품을 기획하고 직접 만들어 발표합니다. 우수작품은 전국 학술대회에서 발표하고, ICT 기업 현장실습으로 실무도 경험합니다.</dd></div>
+            <div><dt>자격증으로 증명하는 실력</dt><dd>CCNA/CCNP, 정보보안기사, 정보처리기사, 무인멀티콥터 조종자격증 등을 전공 자격증 특강과 단기 실습으로 준비합니다.</dd></div>
+            <div><dt>현장과 연구를 아는 교수진</dt><dd>삼성종합기술원·삼성전자 통신연구소의 12년 통신 연구 경험, 정보보호 인증(ISMS·ISMS-P) 심사와 국방과학연구소 암호 연구, 차량 네트워크·드론·인공지능 국제 학술지 연구까지 — 현장과 연구를 함께 아는 교수진이 4개 분야를 가르칩니다. <a href="faculty.html">교수소개 보기</a></dd></div>
+            <div><dt>입학부터 취업까지 책임지도교수제</dt><dd>책임지도교수가 생활과 진로·취업을 정기적으로, 필요할 때는 수시로 상담하며 졸업과 취업까지 함께합니다.</dd></div>
+            <div><dt>동아리와 선후배 튜터링</dt><dd>드론·AR/VR·Unity·인공지능·DB시스템 전공동아리와 선후배 전공과목 튜터링이 있습니다. 대학의 커뮤니티 동아리(스포츠·봉사·문화예술·독서·취창업)에도 참여할 수 있습니다.</dd></div>
+            <div><dt>졸업생 1,725명의 선배 네트워크</dt><dd>1997년 정보통신학과로 시작해 2026년 2월까지 졸업생 1,725명을 배출했습니다. 선배와 재학생의 인적 네트워크, 세명가족기업·산업체 연계 교육이 취업을 돕습니다.</dd></div>
+            <div><dt>취업 지원 프로그램</dt><dd>진로·취업 전문상담, 자기소개서 첨삭, 희망 기업 전문가와의 모의 면접, 취·창업 캠프, 잡 매칭까지 학부와 대학이 함께 지원합니다.</dd></div>
+          </dl>
+        </section>
+
+        <section class="sec" aria-labelledby="s3">
+          <h2 class="sec-h" id="s3">취득 자격증</h2>
+          <ul class="chips">
+            <li>CCNA/CCNP</li><li>네트워크관리사</li><li>정보보안기사</li><li>정보처리기사</li><li>리눅스마스터</li><li>스마트앱마스터</li>
+            <li>초경량비행장치 무인멀티콥터 조종자격증</li><li>AWS/MS Azure/IBM 머신러닝 및 AI응용 개발 전문가</li><li>데이터 분석전문가</li><li>빅데이터분석기사</li>
+          </ul>
+        </section>
+
+        <section class="sec" aria-labelledby="s4">
+          <h2 class="sec-h" id="s4">더 알아보기</h2>
+          <ul class="more-links">
+            <li><a href="curriculum.html">교육과정</a></li>
+            <li><a href="roadmap.html">전공교육 체계도</a></li>
+            <li><a href="career.html">진로와 취업</a></li>
+            <li><a href="faculty.html">교수소개</a></li>
+            <li><a href="greeting.html">학부장 인사말</a></li>
+            <li><a href="admission.html">입학 안내</a></li>
+          </ul>
+        </section>
+      </article>
+
+      <aside class="pageinfo" aria-label="페이지 정보">
+        <dl>
+          <div><dt>담당부서</dt><dd>스마트IT학부</dd></div>
+          <div><dt>연락처</dt><dd>043-649-1275</dd></div>
+          <div><dt>최종수정일</dt><dd>2025-09-03</dd></div>
+        </dl>
+        <form class="survey" onsubmit="return false">
+          <b id="sv-q">이 페이지에서 제공하는 정보에 대하여 만족하시나요?</b>
+          <span class="sv-opts" role="radiogroup" aria-labelledby="sv-q">
+            <label><input type="radio" name="point" value="5">매우만족</label>
+            <label><input type="radio" name="point" value="4">만족</label>
+            <label><input type="radio" name="point" value="3">보통</label>
+            <label><input type="radio" name="point" value="2">불만족</label>
+            <label><input type="radio" name="point" value="1">매우불만족</label>
+          </span>
+          <button type="submit">등록하기</button>
+        </form>
+      </aside>
+    </main>
+  </div>
+</div>
+
+<footer class="foot">
+  <div class="foot-in">
+    <b>세명대학교 스마트IT학부</b>
+    <span>27136 충청북도 제천시 세명로 65 (신월동) 세명대학교 스마트IT학부 첨단정보학관 423호 · TEL 043-649-1747 · FAX 043-649-1747</span>
+    <nav aria-label="바닥글 링크">
+      <a href="https://www.semyung.ac.kr/kor/sitemap_15.do" target="_blank" rel="noopener">개인정보처리방침</a>
+      <a href="https://www.semyung.ac.kr/kor/sitemap_16.do" target="_blank" rel="noopener">이메일무단수집거부</a>
+      <a href="https://www.semyung.ac.kr/kor/sub01_06_02.do" target="_blank" rel="noopener">찾아오시는 길</a>
+      <a href="https://www.semyung.ac.kr/smartit/sitemap_11.do" target="_blank" rel="noopener">사이트맵</a>
+    </nav>
+    <span class="copy">COPYRIGHT (C) 2017 Semyung University ALL RIGHTS RESERVED.</span>
+  </div>
+</footer>
+
+<details class="proto">
+  <summary>PROTOTYPE 09 · 서브</summary>
+  <div class="in">
+<!--PROTO:BEGIN-->
+    <div class="row" role="group" aria-label="서브 화면: SMIT 소개">
+      <a href="about.html" aria-current="page">학부소개</a><a href="greeting.html">인사말</a><a href="history.html">연혁</a><a href="faculty.html">교수소개</a>
+    </div>
+    <div class="row" role="group" aria-label="서브 화면: SMIT 교육">
+      <a href="goal.html">교육목표</a><a href="curriculum.html">교육과정</a><a href="roadmap.html">체계도</a>
+    </div>
+    <div class="row" role="group" aria-label="서브 화면: SMIT 취업">
+      <a href="employ.html">SMIT 취업</a><a href="recruit.html">채용공고</a><a href="career.html">진로와 취업</a>
+    </div>
+    <div class="row" role="group" aria-label="서브 화면: SMIT 소식">
+      <a href="notice.html">공지 목록</a><a href="notice.html#n486428">공지 본문</a><a href="gallery.html">갤러리</a><a href="gallery.html#g486440">갤러리 본문</a><a href="contest.html">경진대회</a><a href="club.html">동아리</a>
+    </div>
+    <div class="row" role="group" aria-label="서브 화면: SMIT 입학">
+      <a href="admission.html">입학정보</a>
+    </div>
+<!--PROTO:END-->
+    <div class="row"><button type="button" id="p-sweep" aria-pressed="true">빛줄 켬</button></div>
+  </div>
+</details>
+<script src="sub.js"></script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>스마트IT학부 웹 1차본</title>
+<style>
+html, body { margin: 0; min-height: 100%; background: #03080b; color: #8693a3; font: 14px/1.6 system-ui, sans-serif; }
+.go { position: fixed; left: 24px; bottom: 24px; margin: 0; opacity: 0; animation: go-show 0s 1.5s forwards; }
+.go a { color: #f3f6fa; }
+@keyframes go-show { to { opacity: 1; } }
+</style>
+<script>
+// 세션 18(10-18) 포장 변경: 메인은 main.html(원본 파일로 따로 올림 — tools/build_site.py 설명). 기록을 쌓지 않고(replace) 주소의 ?·#를 그대로 넘긴다
+try { sessionStorage.removeItem('__frame_scroll'); } catch (err) { }
+location.replace('main.html' + location.search + location.hash);
+</script>
+</head>
+<body>
+<p class="go">메인 화면으로 넘어가는 중입니다. 넘어가지 않으면 <a href="main.html">여기를 누르세요</a>.</p>
+</body>
+</html>

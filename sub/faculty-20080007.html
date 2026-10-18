@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>조면균 교수 · 교수소개 · 세명대학교 스마트IT학부</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,500;125,600;125,700&display=block">
+<link rel="preload" href="../fonts/pretendard-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/pretendard-500.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/pretendard-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/pretendard-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/pretendard-800.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="sub.css">
+<meta name="theme-color" content="#03080b">
+<style>@view-transition { navigation: auto; } @media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }</style>
+<script>
+// 웹 1차본 연결 장치 05(피드백 6, 10-17 — tools/build_site.py가 단다): 메인에서 넘어올 때만 이 쪽 전체가 아래에서 올라온다(sub.css vt-up). 서브끼리는 전환하지 않는다
+// 세션 17(10-17) 게시 틀 보정 — claude.ai 아티팩트 틀에서만 생기던 결함(설명 = 메인 머리 스크립트 — 1차본 main.html, 원본 proto-07-zoom/index.html):
+//  ① 틀의 스크롤 기억 sessionStorage '__frame_scroll'(쪽과 상관없이 높이 하나)을 틀이 읽기 전에 지운다 — 메인 높이가 옮겨져 이 쪽이 맨 아래부터 보였다
+//  ② 틀은 no-referrer라 주소로 '메인에서 왔는지'를 못 가린다 → 떠나는 쪽이 남긴 표 'smit.from'(15초 안)을 쓰고, 이 쪽을 떠날 때 {k: 'sub'}를 남긴다
+try { sessionStorage.removeItem('__frame_scroll'); } catch (err) { }
+const vtFrom = () => { try { const f = JSON.parse(sessionStorage.getItem('smit.from') || 'null'); sessionStorage.removeItem('smit.from'); return f && Date.now() - f.t < 15000 ? f.k : ''; } catch (err) { return ''; } };
+const vtMark = () => { try { sessionStorage.setItem('smit.from', JSON.stringify({ k: 'sub', t: Date.now() })); } catch (err) { } };
+let vtHanded = vtFrom();   // 떠난 쪽 표('main' | 'sub' | '') — 처음 열 때 한 번 읽고 지운다
+// 세션 18(검증 3라운드 GPT 권고): 이 쪽에서 마지막으로 쓴 입력 방식을 남긴다 → 메인으로 뒤로 돌아오면 그 방식을 이어받는다(메인 머리 스크립트 — 포커스·테두리를 돌려줄지)
+// 키보드로 세는 키는 메인과 같다: Tab · Enter · 버튼·링크 위 Space(검증 4라운드 GPT·Opus — 서브만 Space를 안 셌다)
+addEventListener('pointerdown', () => { try { sessionStorage.setItem('smit.inp', 'pointer'); } catch (err) { } }, true);
+addEventListener('keydown', e => {
+  const t = e.target, ctl = t && t.closest && t.closest('a[href], button, summary, [role="button"], [tabindex]:not([tabindex="-1"])');
+  if (e.key === 'Tab' || e.key === 'Enter' || (e.key === ' ' && ctl)) try { sessionStorage.setItem('smit.inp', 'key'); } catch (err) { }
+}, true);
+addEventListener('pageswap', () => vtMark()); addEventListener('pagehide', () => vtMark());
+document.addEventListener('click', e => {   // 누르는 순간에도 남긴다(pageswap보다 먼저) — 새 창 열기(가운데 단추·Ctrl·Shift 등)·다른 사이트는 빼고
+  const a = e.target.closest ? e.target.closest('a[href]') : null;
+  if (a && e.button === 0 && !(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) && (!a.target || a.target === '_self') && a.origin === location.origin) vtMark();
+}, true);
+let bfRestored = false;   // 뒤로·앞으로 캐시(bfcache)에서 되살아남 — pageshow(persisted)가 pagereveal보다 먼저 온다. 그때는 떠난 쪽 표를 새로 읽는다
+addEventListener('pageshow', e => { if (e.persisted) { bfRestored = true; vtHanded = vtFrom(); } });
+addEventListener('pagereveal', e => {
+  if (!e.viewTransition) return;
+  let from = '', main = false;
+  try {
+    const a = window.navigation && navigation.activation;
+    if (a) from = a.from ? a.from.url : '';
+    else { const n = performance.getEntriesByType('navigation')[0]; if (!(n && n.type === 'back_forward') && !bfRestored) from = document.referrer; }   // Navigation API가 없으면 이력 이동(새로 연 쪽·bfcache 되살림)의 referrer는 직전 쪽이 아닐 수 있어 전환하지 않는다(GPT 검수 R-01 · 2라운드)
+  } catch (err) { }
+  bfRestored = false;
+  try { const u = new URL(from); main = u.origin === location.origin && !/\/sub\//.test(u.pathname); } catch (err) { }
+  if (!from && vtHanded === 'main') main = true;   // 게시 틀 보정 ②: 주소가 비면(no-referrer 틀 · 이력 이동) 떠난 쪽이 남긴 표로
+  window.__vt = { main, t: Math.round(performance.now()) };   // 시험용(tools/test_site.py · capture_transition.py): t = 이 쪽 열기 시작부터 공개까지(ms)
+  if (!main) { e.viewTransition.ready.catch(() => {}); e.viewTransition.skipTransition(); return; }   // 건너뛰면 ready가 거부된다 — 받아 두어 콘솔 오류를 내지 않는다
+  document.documentElement.classList.add('vt-up');
+  e.viewTransition.finished.finally(() => document.documentElement.classList.remove('vt-up'));
+});
+</script>
+</head>
+<!-- 시안 9 서브 화면: 교수 상세(조면균). 값 = 현행 교수 상세 원문(https://www.semyung.ac.kr/prog/profsrIntrcn/smartit/MC50/sub01_03/view.do?jikwon_no=20080007&amp;pageIndex=1, 2026-10-16 수집)
+     → tools/extract_prof_view.py → tools/build_prof_detail.py가 만든다(손으로 고치지 않는다). 껍데기는 faculty.html과 같다. -->
+<body data-page="faculty">
+<a class="skip" href="#main">본문 바로가기</a>
+<section class="band" aria-label="머리 띠">
+  <img class="bg-full" src="media/band_bg_ch1.jpg" alt="" aria-hidden="true">
+  <div class="stage" aria-hidden="true">
+    <img class="st-bg" src="media/band_bg_ch1.jpg" alt="">
+    <img class="st-glass" src="media/band_glass_ch1.webp" alt="">
+    <video class="st-sweep" id="st-sweep" src="media/band_sweep.mp4" muted loop autoplay playsinline preload="auto"></video>
+  </div>
+  <div class="shade" aria-hidden="true"></div>
+  <header class="top">
+    <a class="brand" href="../main.html"><small>세명대학교</small><b>스마트IT학부</b></a>
+<!--GNB:BEGIN-->
+    <nav class="gnb" aria-label="주 메뉴">
+      <a href="about.html" aria-current="true">SMIT 소개</a>
+      <a href="goal.html">SMIT 교육</a>
+      <a href="employ.html">SMIT 취업</a>
+      <a href="notice.html">SMIT 소식</a>
+      <a href="admission.html">SMIT 입학</a>
+    </nav>
+<!--GNB:END-->
+    <button class="menu-btn" type="button">메뉴</button>
+  </header>
+  <div class="title">
+    <a class="kicker" href="../main.html#about" title="메인 01 SMIT 소개 장으로"><b>01</b><span class="k-t"><span class="k-ko">SMIT 소개</span><span class="k-sep"> · </span><span class="k-en">About</span></span></a>
+    <h1>교수소개</h1>
+    <div class="t-line" aria-hidden="true"></div>
+    <p class="crumb"><a href="../main.html">HOME</a> › SMIT 소개 › <a href="faculty.html">교수소개</a> › 조면균</p>
+  </div>
+</section>
+
+<div class="paper">
+  <div class="wrap">
+<!--LNB:BEGIN-->
+    <nav class="lnb" aria-label="SMIT 소개 하위 메뉴">
+      <h2>SMIT 소개</h2>
+      <ul>
+        <li><a href="about.html">학부소개</a></li>
+        <li><a href="greeting.html">학부장 인사말</a></li>
+        <li><a href="history.html">학부연혁</a></li>
+        <li class="on"><a href="faculty.html" aria-current="true">교수소개</a></li>
+      </ul>
+    </nav>
+<!--LNB:END-->
+
+    <main class="main" id="main">
+      <a class="to-list" href="faculty.html"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3.5 5.5 8l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>교수소개 목록</a>
+      <article class="pf" aria-labelledby="pf-name">
+        <header class="pf-head">
+          <div class="pf-photo"><img src="media/prof/20080007.jpg" alt="조면균 교수 사진" width="398" height="531" decoding="async"></div>
+          <div class="pf-id">
+            <p class="pf-pos">교수</p>
+            <h2 id="pf-name">조면균</h2>
+            <p class="pf-en" lang="en">Cho, Myeon-Gyun</p>
+            <p class="pf-dept">AI융합대학 스마트IT학부</p>
+          </div>
+          <dl class="pf-contact">
+            <div><dt>연구실</dt><dd>첨단정보학관 4층 417호</dd></div>
+            <div><dt>전화</dt><dd><a href="tel:043-649-1275">043-649-1275</a></dd></div>
+            <div><dt>이메일</dt><dd class="mail"><a href="mailto:mg_cho@semyung.ac.kr">mg_cho<wbr>@semyung.ac.kr</a></dd></div>
+          </dl>
+        </header>
+
+        <section class="pf-courses" aria-labelledby="pf-c-h">
+          <h3 id="pf-c-h">담당과목</h3>
+          <ul class="pf-chips"><li>정보통신 첫걸음</li><li>AR/VR 이론및실습</li><li>통신이론및실습</li><li>스마트 운영체제</li><li>차세대 이동통신</li><li>스마트IT캡스톤디자인I/II</li></ul>
+        </section>
+
+<nav class="pf-toc" aria-label="쪽 안 차례">
+  <ol><li><a href="#pf-A"><span class="i" aria-hidden="true">01</span>학위및약력</a></li><li><a href="#pf-C"><span class="i" aria-hidden="true">02</span>연구분야</a></li><li><a href="#pf-D"><span class="i" aria-hidden="true">03</span>논문</a></li><li><a href="#pf-E"><span class="i" aria-hidden="true">04</span>저서및특허</a></li><li><a href="#pf-F"><span class="i" aria-hidden="true">05</span>산학협력(연구과제)</a></li><li><a href="#pf-G"><span class="i" aria-hidden="true">06</span>대외활동</a></li></ol>
+</nav>
+
+<section class="pf-sec" id="pf-A" aria-labelledby="pf-A-h">
+  <h3 id="pf-A-h">학위및약력</h3>
+  <div class="pf-body">
+    <h4>[학 위]</h4>
+    <ul><li>연세대학교(서울) 전기전자공학과 박사</li><li>한양대학교(서울) 전자통신공학과 석사</li><li>한양대학교(서울) 전자통신공학과 학사</li></ul>
+    <h4>[약 력]</h4>
+    <ul><li>2008년 03월 ~ 현재 : 세명대학교 스마트IT학부 교수</li><li>2020년 03월 ~ 2021년 2월 : 연세대학교 지능형반도체연구단 연구년 파견</li><li>2016년 10월 ~ 2019년 12월 : 세명대학교 디지털정보원 원장</li><li>2017년 03월 ~ 2020년 2월 : 세명대학교 의료IT디자인융합연구소 소장</li><li>2017년 09월 ~ 2019년 6월 : 세명대학교 LINC+ IoT융합시스템학 연계전공 주임교수</li><li>2000년 3월 ~ 2008년 2월 : 삼성전자 통신연구소 차세대시스템팀 책임연구원</li><li>1996년 3월 ~ 2000년 2월 : 삼성종합기술원 디지털통신연구실 전임연구원</li></ul>
+  </div>
+</section>
+<section class="pf-sec" id="pf-C" aria-labelledby="pf-C-h">
+  <h3 id="pf-C-h">연구분야</h3>
+  <div class="pf-body">
+    <p>5G 이동통신, AI 기반 Smart Aging 지원시스템, 감성지원 스마트 AR/VR 시스템, 메타버스 응용</p>
+  </div>
+</section>
+<section class="pf-sec" id="pf-D" aria-labelledby="pf-D-h">
+  <h3 id="pf-D-h">논문</h3>
+  <div class="pf-body">
+    <ol class="refs"><li><span class="no">[38]</span> <span class="tx">&quot;Adaptive Robust Formation-Containment Control for Multiple USV System under Communication Delay and Input Saturation&quot;, 스마트융합콘텐츠 논문지(KCI), 2026. 09. (게재확정)</span></li><li><span class="no">[37]</span> <span class="tx">&quot;소셜 가상현실(VR) 환경에서 실감형 상호작용을 위한 멀티모달 기반 비언어적 감정 지각 및 아바타 매핑 기술 연구&quot;, 디지털정책학회 논문지(KCI), 2026. 09. (게재확정)</span></li><li><span class="no">[36]</span> <span class="tx">&quot;A Study on the Parametric Design and Performance Optimization of Hubless Rim-Driven Thruster for Small-Scale Marine Vehicles&quot;, IJOC(International Journal of Contents) KCI, 2026. 03.</span></li><li><span class="no">[35]</span> <span class="tx">&quot;Robust Facial Expression Recognition in Occluded VR Environments: Leveraging Temporal Information for Enhanced Recognition&quot;, 디지털정책학회 논문지(KCI), 2025. 09.</span></li><li><span class="no">[34]</span> <span class="tx">&quot;Design and Implementation of an Adaptive English Text Regeneration System Based on CEFR Language Proficiency Levels&quot;. IJOC(International Journal of Contents) KCI, 2025. 09.</span></li><li><span class="no">[33]</span> <span class="tx">&quot;머신러닝 기반의 블레이드 손실계수 예측모델에 관한 연구&quot;, 스마트융합콘텐츠 논문지(KCI), 2025. 06</span></li><li><span class="no">[32]</span> <span class="tx">&quot;Virtual Reality based Rapid Eye Movement Detection Algorithm for High Precision Facial Pain Recognition&quot;, 스마트융합콘텐츠 논문지(KCI), 2024. 12</span></li><li><span class="no">[31]</span> <span class="tx">&quot;AR기반의 대학입학생 모집홍보용 애플리케이션 연구&quot;, 스마트융합콘텐츠 논문지(KCI), 2024. 12</span></li><li><span class="no">[30]</span> <span class="tx">&quot;메타버스 기반의 고령자향 위험지역 회피시스템의 연구&quot;, 스마트융합콘텐츠 논문지(KCI), 2024. 09</span></li><li><span class="no">[29]</span> <span class="tx">&quot;AR기반의 무라벨 상품용 효과적인 홍보 애플리케이션의 연구&quot;, 스마트융합콘텐츠 논문지(KCI), 2024. 06</span></li><li><span class="no">[28]</span> <span class="tx">&quot;AR과 AI 융합기술을 활용한 인터랙션 도서 디자인 애플리케이션 연구&quot;, 스마트융합콘텐츠 논문지(KCI), 2024. 03</span></li><li><span class="no">[27]</span> <span class="tx">&quot;신종 바이러스에 대응하는 스마트 고령자지원 시스템의 연구&quot;, 산업융합연구 논문지, 2023. 01</span></li><li><span class="no">[26]</span> <span class="tx">&quot;고령자를 위한 메타버스 기반의 Smart Aging 시스템의 연구&quot;, 디지털정책학회 논문지, 2022. 02</span></li><li><span class="no">[25]</span> <span class="tx">&quot;Convergence Model of AI and IoT for virus disease control system&quot;, Personal and Ubiquitous Computing (SCIE), 2021. 06</span></li><li><span class="no">[24]</span> <span class="tx">&quot;Augmented Reality-Based Health-Care and Emergency-Treatment System for the Elderly&quot;, Journal of Computational and Theoretical Nano-science (SCIE), 2021. 04</span></li><li><span class="no">[23]</span> <span class="tx">&quot;고령자를 위한 인공지능기반의 웰빙 지원시스템&quot;, 융합정보논문지, 2021. 02</span></li><li><span class="no">[22]</span> <span class="tx">&quot;적외선을 이용한 차량간 긴급통신 정책 및 시스템 연구&quot;, 디지털정책학회 논문지, 2020. 04</span></li><li><span class="no">[21]</span> <span class="tx">&quot;Location Based Services (LBS) for the Elderly using Augmented Reality&quot;, TEST Engineering &amp; Management Magazine(SCIE), 2020. 03</span></li><li><span class="no">[20]</span> <span class="tx">&quot;The Implementation of Age-Friendly Services for the Elderly Living Alone&quot;, International Journal of Advanced Science and Technology. IJAST(SCIE), 2019. 09</span></li><li><span class="no">[19]</span> <span class="tx">&quot;A study on Web service supporting mobility of users using ICT-based autonomous feedback knowledge information&quot;, Personal and Ubiquitous Computing(SCIE), 2019. 07</span></li><li><span class="no">[18]</span> <span class="tx">&quot;A Design of Smart Emergency Call System for Elderly Drivers&quot;, IJITEE(SCIE), 2019. 06</span></li><li><span class="no">[17]</span> <span class="tx">&quot;Selective switching dual-transmission scheme in multi-LED Hybrid VLC-P2P networking system&quot;, Peer-to-Peer Networking and Applications(SCIE), 2019.06</span></li><li><span class="no">[16]</span> <span class="tx">&quot;가상현실과 포톤 네트워크를 이용한 고령 환자용 여행체험 콘텐츠의 구현&quot;, 융합정보논문지, 2018. 12</span></li><li><span class="no">[15]</span> <span class="tx">&quot;고령자의 운전패턴 인식을 통한 운전면허증 갱신 및 반납 정책에 대한 연구&quot;, 디지털콘텐츠학회논문지, 2018. 10</span></li><li><span class="no">[14]</span> <span class="tx">&quot;A Study on TLD as an Advanced Driver Assistance System (ADAS) for Elderly Drivers&quot;, IJOC, 2018. 06</span></li><li><span class="no">[13]</span> <span class="tx">&quot;임베디드시스템 기반 자동제어 기능의 삼단분리형 산소챔버 설계&quot;, 융합정보논문지, 2018. 06</span></li><li><span class="no">[12]</span> <span class="tx">&quot;QR코드와 지문인식을 이용한 고령환자의 응급 의료정보 관리방법에 대한 연구&quot;, 융합정보논문지, 2017. 12</span></li><li><span class="no">[11]</span> <span class="tx">&quot;스마트폰을 이용한 고령자용 스마트 간병 시스템&quot;, 융합정보논문지, 2017. 10</span></li><li><span class="no">[10]</span> <span class="tx">&quot;LED 식물공장을 이용한 취미용 원격 식물재배 위탁 시스템에 대한 연구&quot;, 융합정보논문지, 2017. 02</span></li><li><span class="no">[9]</span> <span class="tx">&quot;Development of Smartphone Applications for Chronic Diseases of the Elderly&quot;, JOLST, 2015. 12</span></li><li><span class="no">[8]</span> <span class="tx">&quot;아두이노 기반의 독거노인을 위한 스마트홈 시스템&quot;, 대한임베디드공학회논문지, 2015. 10</span></li><li><span class="no">[7]</span> <span class="tx">&quot;소변검사와 생체센서를 이용한 치매 스크리닝 애플리케이션 개발&quot;, 대한임베디드공학회논문지, 2015. 04</span></li><li><span class="no">[6]</span> <span class="tx">&quot;스마트폰 증후군 예방을 위한 애플리케이션 개발&quot;, 대한임베디드공학회논문지, 2015. 02</span></li><li><span class="no">[5]</span> <span class="tx">&quot;운전자의 분노검출을 통한 안전운전 시뮬레이터 개발&quot;, 산업기술연구소논문집, 2014. 12</span></li><li><span class="no">[4]</span> <span class="tx">&quot;감정인식 기능의 스마트폰을 통한 양방향 방송서비스&quot;, 통신위성우주산업연구회논문지, 2013. 12</span></li><li><span class="no">[3]</span> <span class="tx">&quot;생체센서를 이용한 치매진단용 어플리케이션 프로그램과 산소챔버의 융합&quot;, 한국산학기술학회논문지, 2013. 11</span></li><li><span class="no">[2]</span> <span class="tx">&quot;노인 복지를 위한 응급 상황 호출 프로그램의 개발 및 구현&quot;, 대한임베디드공학회논문지, 2013. 04</span></li><li><span class="no">[1]</span> <span class="tx">&quot;고령자의 감성만족과 정신건강을 위한 스마트폰 응용기술&quot;, 대한임베디드공학회논문지, 2013. 02</span></li></ol>
+  </div>
+</section>
+<section class="pf-sec" id="pf-E" aria-labelledby="pf-E-h">
+  <h3 id="pf-E-h">저서및특허</h3>
+  <div class="pf-body">
+    <p>[출원번호/등록번호]       [특허명]</p>
+    <p>[등록- 10 -2325434] [고령자를 위한 증강현실 기술을 이용한 복지 지원 장치 및 방법]</p>
+    <p>[등록- 10 -2180611] [교통 안내 시스템을 포함하는 차량]</p>
+    <p>[등록- 10 -2041715] [교통약자를 위한 이동지원방법 및 그 장치]</p>
+    <p>[등록- 10 -1922337] [고령자를 위한 안전운전 보조방법]</p>
+    <p>[등록- 10 -1809741] [식물재배 원격제어시스템 및 그 제어방법]</p>
+    <p>[등록- 10 -1704467] [차량용 산소 치료 장치]</p>
+    <p>[등록- 10 -1592123] [산소챔버를 구비하는 산소치료 시스템]</p>
+    <p>[등록- 10 -1642876] [수력 발전용 수차]</p>
+    <p>[출원-2015-0044901] [치매 검진 시스템]</p>
+    <p>[출원-2014-0020267] [양방향 방송 시스템을 이용한 우울증 방지 시스템 및 방지 방법]</p>
+    <p>[등록- 10 -1539149] [오감을 활용한 산소 치료 시스템]</p>
+    <p>[출원-2013-0135260] [모바일 단말기를 이용한 산소 치료 시스템 및 방법]</p>
+    <p>[등록- 10 -1456470] [냉증 진단 치료 시스템 및 이의 제어 방법]</p>
+    <p>[등록- 10 -1353195] [이동통신단말을 이용한 조명제어 방법]</p>
+    <p>[출원-2011-0096776] [이동 단말기와 주변기기를 이용한 사용자의 감성인지 시스템]</p>
+    <p>[출원-2011-0096777] [지능적 이동통신 단말을 이용한 우울증 방지 시스템]</p>
+    <h4>[삼성전자 재직시 특허등록 건수]</h4>
+    <p>[등록- 10 -1434391] [통신 시스템에서 자원할당 장치 및 방법] 외 67건 국내등록, 3건 해외등록</p>
+  </div>
+</section>
+<section class="pf-sec" id="pf-F" aria-labelledby="pf-F-h">
+  <h3 id="pf-F-h">산학협력(연구과제)</h3>
+  <div class="pf-body">
+    <p>[최근 5년 과제수주] [과제명] [금액] [관리기관]</p>
+    <ul><li>[2019.06-2022.02][가상현실/증강현실을 이용한 고령자 콘텍스트 기반의 스마트 지원 시스템][150,000천원][한국연구재단]</li><li>[2016.11-2019.10][고령자의 인지능력, 감정상황 및 건강상태를 고려한 안전운전보조시스템][150,000천원][한국연구재단]</li><li>[2015.12-2018.09][충북지역 맞춤형 의료기기 기술지원 사업][300,000천원][산업통상자원부]</li><li>[2012.02-2015.12][양·한방 융합을 통한 근육 피로 회복 기기 개발][300,000천원][산업통상자원부]</li><li>[2011.12-2015.11][냉증치료효과를 극대화시키는 적응적 산소공급 시스템][1,200,000천원][보건복지부]</li><li>[2014.06-2015.05][양식장의 관수시설을 이용한 1.2KW급 발전시스템 개발][90,000천원][중소기업청]</li><li>[2012.05-2015.04][사용자의 의도인식 및 감정이식 기반의 감성통신 시스템][180,000천원][한국연구재단]</li><li>[2012.06-2013.05][변동 회전속도에서도 고정 전력을 보장하는 차세대 버스용 발전기 개발][60,000천원][중소기업청]</li></ul>
+  </div>
+</section>
+<section class="pf-sec" id="pf-G" aria-labelledby="pf-G-h">
+  <h3 id="pf-G-h">대외활동</h3>
+  <div class="pf-body">
+    <ul><li>스마트융합콘텐츠학회(등재후보지) 회장</li><li>한국통신학회 기금운용 집행 이사</li><li>대한전자공학회 산학협력 이사</li><li>대한임베디드공학회 홍보 이사</li><li>한국디지털정책학회 정회원</li></ul>
+  </div>
+</section>
+
+        <div class="pf-actions">
+          <a class="btn-list" href="faculty.html">목록으로</a>
+        </div>
+      </article>
+
+      <aside class="pageinfo" aria-label="페이지 정보">
+        <dl>
+          <div><dt>담당부서</dt><dd>스마트IT학부</dd></div>
+          <div><dt>연락처</dt><dd>043-649-1275</dd></div>
+          <div><dt>최종수정일</dt><dd>2024-10-26</dd></div>
+        </dl>
+        <form class="survey" onsubmit="return false">
+          <b id="sv-q">이 페이지에서 제공하는 정보에 대하여 만족하시나요?</b>
+          <span class="sv-opts" role="radiogroup" aria-labelledby="sv-q">
+            <label><input type="radio" name="point" value="5">매우만족</label>
+            <label><input type="radio" name="point" value="4">만족</label>
+            <label><input type="radio" name="point" value="3">보통</label>
+            <label><input type="radio" name="point" value="2">불만족</label>
+            <label><input type="radio" name="point" value="1">매우불만족</label>
+          </span>
+          <button type="submit">등록하기</button>
+        </form>
+      </aside>
+    </main>
+  </div>
+</div>
+
+<footer class="foot">
+  <div class="foot-in">
+    <b>세명대학교 스마트IT학부</b>
+    <span>27136 충청북도 제천시 세명로 65 (신월동) 세명대학교 스마트IT학부 첨단정보학관 423호 · TEL 043-649-1747 · FAX 043-649-1747</span>
+    <nav aria-label="바닥글 링크">
+      <a href="https://www.semyung.ac.kr/kor/sitemap_15.do" target="_blank" rel="noopener">개인정보처리방침</a>
+      <a href="https://www.semyung.ac.kr/kor/sitemap_16.do" target="_blank" rel="noopener">이메일무단수집거부</a>
+      <a href="https://www.semyung.ac.kr/kor/sub01_06_02.do" target="_blank" rel="noopener">찾아오시는 길</a>
+      <a href="https://www.semyung.ac.kr/smartit/sitemap_11.do" target="_blank" rel="noopener">사이트맵</a>
+    </nav>
+    <span class="copy">COPYRIGHT (C) 2017 Semyung University ALL RIGHTS RESERVED.</span>
+  </div>
+</footer>
+
+<details class="proto">
+  <summary>PROTOTYPE 09 · 서브</summary>
+  <div class="in">
+<!--PROTO:BEGIN-->
+    <div class="row" role="group" aria-label="서브 화면: SMIT 소개">
+      <a href="about.html">학부소개</a><a href="greeting.html">인사말</a><a href="history.html">연혁</a><a href="faculty.html" aria-current="true">교수소개</a>
+    </div>
+    <div class="row" role="group" aria-label="서브 화면: SMIT 교육">
+      <a href="goal.html">교육목표</a><a href="curriculum.html">교육과정</a><a href="roadmap.html">체계도</a>
+    </div>
+    <div class="row" role="group" aria-label="서브 화면: SMIT 취업">
+      <a href="employ.html">SMIT 취업</a><a href="recruit.html">채용공고</a><a href="career.html">진로와 취업</a>
+    </div>
+    <div class="row" role="group" aria-label="서브 화면: SMIT 소식">
+      <a href="notice.html">공지 목록</a><a href="notice.html#n486428">공지 본문</a><a href="gallery.html">갤러리</a><a href="gallery.html#g486440">갤러리 본문</a><a href="contest.html">경진대회</a><a href="club.html">동아리</a>
+    </div>
+    <div class="row" role="group" aria-label="서브 화면: SMIT 입학">
+      <a href="admission.html">입학정보</a>
+    </div>
+<!--PROTO:END-->
+    <div class="row"><button type="button" id="p-sweep" aria-pressed="true">빛줄 켬</button></div>
+  </div>
+</details>
+<script src="sub.js"></script>
+</body>
+</html>

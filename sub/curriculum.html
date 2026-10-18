@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>교육과정 · 세명대학교 스마트IT학부</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,500;125,600;125,700&display=block">
+<link rel="preload" href="../fonts/pretendard-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/pretendard-500.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/pretendard-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/pretendard-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/pretendard-800.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="sub.css">
+<meta name="theme-color" content="#03080b">
+<style>@view-transition { navigation: auto; } @media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }</style>
+<script>
+// 웹 1차본 연결 장치 05(피드백 6, 10-17 — tools/build_site.py가 단다): 메인에서 넘어올 때만 이 쪽 전체가 아래에서 올라온다(sub.css vt-up). 서브끼리는 전환하지 않는다
+// 세션 17(10-17) 게시 틀 보정 — claude.ai 아티팩트 틀에서만 생기던 결함(설명 = 메인 머리 스크립트 — 1차본 main.html, 원본 proto-07-zoom/index.html):
+//  ① 틀의 스크롤 기억 sessionStorage '__frame_scroll'(쪽과 상관없이 높이 하나)을 틀이 읽기 전에 지운다 — 메인 높이가 옮겨져 이 쪽이 맨 아래부터 보였다
+//  ② 틀은 no-referrer라 주소로 '메인에서 왔는지'를 못 가린다 → 떠나는 쪽이 남긴 표 'smit.from'(15초 안)을 쓰고, 이 쪽을 떠날 때 {k: 'sub'}를 남긴다
+try { sessionStorage.removeItem('__frame_scroll'); } catch (err) { }
+const vtFrom = () => { try { const f = JSON.parse(sessionStorage.getItem('smit.from') || 'null'); sessionStorage.removeItem('smit.from'); return f && Date.now() - f.t < 15000 ? f.k : ''; } catch (err) { return ''; } };
+const vtMark = () => { try { sessionStorage.setItem('smit.from', JSON.stringify({ k: 'sub', t: Date.now() })); } catch (err) { } };
+let vtHanded = vtFrom();   // 떠난 쪽 표('main' | 'sub' | '') — 처음 열 때 한 번 읽고 지운다
+// 세션 18(검증 3라운드 GPT 권고): 이 쪽에서 마지막으로 쓴 입력 방식을 남긴다 → 메인으로 뒤로 돌아오면 그 방식을 이어받는다(메인 머리 스크립트 — 포커스·테두리를 돌려줄지)
+// 키보드로 세는 키는 메인과 같다: Tab · Enter · 버튼·링크 위 Space(검증 4라운드 GPT·Opus — 서브만 Space를 안 셌다)
+addEventListener('pointerdown', () => { try { sessionStorage.setItem('smit.inp', 'pointer'); } catch (err) { } }, true);
+addEventListener('keydown', e => {
+  const t = e.target, ctl = t && t.closest && t.closest('a[href], button, summary, [role="button"], [tabindex]:not([tabindex="-1"])');
+  if (e.key === 'Tab' || e.key === 'Enter' || (e.key === ' ' && ctl)) try { sessionStorage.setItem('smit.inp', 'key'); } catch (err) { }
+}, true);
+addEventListener('pageswap', () => vtMark()); addEventListener('pagehide', () => vtMark());
+document.addEventListener('click', e => {   // 누르는 순간에도 남긴다(pageswap보다 먼저) — 새 창 열기(가운데 단추·Ctrl·Shift 등)·다른 사이트는 빼고
+  const a = e.target.closest ? e.target.closest('a[href]') : null;
+  if (a && e.button === 0 && !(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) && (!a.target || a.target === '_self') && a.origin === location.origin) vtMark();
+}, true);
+let bfRestored = false;   // 뒤로·앞으로 캐시(bfcache)에서 되살아남 — pageshow(persisted)가 pagereveal보다 먼저 온다. 그때는 떠난 쪽 표를 새로 읽는다
+addEventListener('pageshow', e => { if (e.persisted) { bfRestored = true; vtHanded = vtFrom(); } });
+addEventListener('pagereveal', e => {
+  if (!e.viewTransition) return;
+  let from = '', main = false;
+  try {
+    const a = window.navigation && navigation.activation;
+    if (a) from = a.from ? a.from.url : '';
+    else { const n = performance.getEntriesByType('navigation')[0]; if (!(n && n.type === 'back_forward') && !bfRestored) from = document.referrer; }   // Navigation API가 없으면 이력 이동(새로 연 쪽·bfcache 되살림)의 referrer는 직전 쪽이 아닐 수 있어 전환하지 않는다(GPT 검수 R-01 · 2라운드)
+  } catch (err) { }
+  bfRestored = false;
+  try { const u = new URL(from); main = u.origin === location.origin && !/\/sub\//.test(u.pathname); } catch (err) { }
+  if (!from && vtHanded === 'main') main = true;   // 게시 틀 보정 ②: 주소가 비면(no-referrer 틀 · 이력 이동) 떠난 쪽이 남긴 표로
+  window.__vt = { main, t: Math.round(performance.now()) };   // 시험용(tools/test_site.py · capture_transition.py): t = 이 쪽 열기 시작부터 공개까지(ms)
+  if (!main) { e.viewTransition.ready.catch(() => {}); e.viewTransition.skipTransition(); return; }   // 건너뛰면 ready가 거부된다 — 받아 두어 콘솔 오류를 내지 않는다
+  document.documentElement.classList.add('vt-up');
+  e.viewTransition.finished.finally(() => document.documentElement.classList.remove('vt-up'));
+});
+</script>
+</head>
+<!-- 시안 9 서브 화면: 교육과정. 본문 = 현행 교육과정 원문(https://www.semyung.ac.kr/prog/curriculumInfo/smartit/MC50/sub02_08/list.do, 2026-10-16 수집, 적용년도 2026년)
+     → tools/extract_subpages.py → tools/build_subpages.py가 만든다(손으로 고치지 않는다). 머리 띠 그림 = 시안 8 유리 SMU(ch2, proto-08-glass/media 사본). -->
+<body data-page="curriculum">
+<a class="skip" href="#main">본문 바로가기</a>
+<section class="band" aria-label="머리 띠">
+  <img class="bg-full" src="media/band_bg_ch2.jpg" alt="" aria-hidden="true">
+  <div class="stage" aria-hidden="true">
+    <img class="st-bg" src="media/band_bg_ch2.jpg" alt="">
+    <img class="st-glass" src="media/band_glass_ch2.webp" alt="">
+    <video class="st-sweep" id="st-sweep" src="media/band_sweep.mp4" muted loop autoplay playsinline preload="auto"></video>
+  </div>
+  <div class="shade" aria-hidden="true"></div>
+  <header class="top">
+    <a class="brand" href="../main.html"><small>세명대학교</small><b>스마트IT학부</b></a>
+<!--GNB:BEGIN-->
+    <nav class="gnb" aria-label="주 메뉴">
+      <a href="about.html">SMIT 소개</a>
+      <a href="goal.html" aria-current="true">SMIT 교육</a>
+      <a href="employ.html">SMIT 취업</a>
+      <a href="notice.html">SMIT 소식</a>
+      <a href="admission.html">SMIT 입학</a>
+    </nav>
+<!--GNB:END-->
+    <button class="menu-btn" type="button">메뉴</button>
+  </header>
+  <div class="title">
+    <a class="kicker" href="../main.html#edu" title="메인 02 SMIT 교육 장으로"><b>02</b><span class="k-t"><span class="k-ko">SMIT 교육</span><span class="k-sep"> · </span><span class="k-en">Curriculum</span></span></a>
+    <h1>교육과정</h1>
+    <div class="t-line" aria-hidden="true"></div>
+    <p class="crumb"><a href="../main.html">HOME</a> › SMIT 교육 › 교육과정</p>
+  </div>
+</section>
+
+<div class="paper">
+  <div class="wrap">
+<!--LNB:BEGIN-->
+    <nav class="lnb" aria-label="SMIT 교육 하위 메뉴">
+      <h2>SMIT 교육</h2>
+      <ul>
+        <li><a href="goal.html">교육목표</a></li>
+        <li class="on"><a href="curriculum.html" aria-current="page">교육과정</a></li>
+        <li><a href="roadmap.html">전공교육 체계도</a></li>
+      </ul>
+    </nav>
+<!--LNB:END-->
+
+    <main class="main" id="main">
+      <section class="sec" aria-label="교육과정 표">
+        <form class="board-search cu-bar" onsubmit="return false">
+          <label for="cu-year">교육과정 적용년도</label>
+          <select id="cu-year"><option selected>2026년</option><option>2025년</option><option>2024년</option><option>2023년</option><option>2022년</option></select>
+          <button type="submit">보기</button>
+        </form>
+        <table class="cu">
+          <caption class="sr">2026년 교육과정: 학년별 이수구분, 과목코드, 과목명(상세정보), 학점, 이론시간, 실습시간</caption>
+          <colgroup><col class="c-k"><col class="c-c"><col><col class="c-h"><col class="c-h"><col class="c-h"></colgroup>
+          <thead><tr><th scope="col">이수구분</th><th scope="col">과목코드</th><th scope="col" class="nm">과목명</th><th scope="col">학점</th><th scope="col">이론시간</th><th scope="col">실습시간</th></tr></thead>
+          <tbody>
+            <tr class="cu-yr"><th scope="rowgroup" colspan="6">1학년</th></tr>
+            <tr><td>전공</td><td data-l="과목코드">005043</td><td class="nm"><span class="cu-n">C언어및실습(C Language &amp; Lab)</span><details><summary>상세정보</summary><p>이 강좌에서는 컴퓨터 프로그래밍의 이해와 동작 원리를 배우고 C언어의 특징과 기본 문법, 알고리즘 추출 및 C 프로그래밍을 다양한 예제와 프로그램 과제 실습을 통해 구현하고 소프트웨어 개발 능력을 배양한다.</p><p lang="en">The main objective of this course is to learn the understanding of computer programming and its major principle operations, and is to enhance program skills by actually implementing various C program examples and projects. This course enables students to understand the characteristics of C language, basic C grammar, extracting algorithms efficiently, and also helps students to grow their C programming ability by implementing C software projects.</p></details></td><td data-l="학점">3</td><td data-l="이론">2</td><td data-l="실습">2</td></tr>
+            <tr><td>전공</td><td data-l="과목코드">402235</td><td class="nm"><span class="cu-n">인공지능첫걸음(Introduction to Artificial Intelligence)</span><details><summary>상세정보</summary><p>4차 산업혁명 시대에 접어들면서 인공지능의 중요성이 더욱 커지고 있다. 본 강의에서는 인공지능 관련 지식과 인공지능 응용에 관련된 포괄적인 지식을 습득할 수 있다.</p><p lang="en">As we enter the era of the 4th industrial revolution, the importance of artificial intelligence is growing. In this lecture, you can acquire comprehensive knowledge related to artificial intelligence and artificial intelligence applications.</p></details></td><td data-l="학점">3</td><td data-l="이론">3</td><td data-l="실습">0</td></tr>
+            <tr><td>전공</td><td data-l="과목코드">402377</td><td class="nm"><span class="cu-n">파이썬프로그래밍실습(Programming in Python)</span><details><summary>상세정보</summary><p>파이썬 언어는 문법이 간결하며, 공동작업과 유지보수가 용이하여 전 세계적으로 많은 사람들에게 사용되고 있는 프로그래밍 언어이다. 본 강의에서는 파이썬 프로그래밍의 기초적이고 체계적인 학습 및 전반적인 내용을 익히도록 한다.</p><p lang="en">The Python language is a programming language that is used by many people around the world because of its simple syntax and easy collaboration and maintenance. In this lecture, you will learn the basic and systematic learning of Python programming and the overall contents.</p></details></td><td data-l="학점">3</td><td data-l="이론">2</td><td data-l="실습">2</td></tr>
+          </tbody>
+          <tbody>
+            <tr class="cu-yr"><th scope="rowgroup" colspan="6">2학년</th></tr>
+            <tr><td>전공</td><td data-l="과목코드">340004</td><td class="nm"><span class="cu-n">기초통계학(Basic Statistics)</span></td><td data-l="학점">3</td><td data-l="이론">3</td><td data-l="실습">0</td></tr>
+            <tr><td>전공</td><td data-l="과목코드">340213</td><td class="nm"><span class="cu-n">자료구조알고리즘실습(Data Structure &amp; Algorithm Lab)</span><details><summary>상세정보</summary><p>본 교과목에서는 프로그램을 정확하고 효율적으로 작성하기 위하여 데이터를 저장하기 위한 다양한 데이터 구조와 프로그램의 논리 및 알고리즘에 대하여 학습하고, 적절한 실습을 통하여 배운 알고리즘들을 실제로 구현하여 프로그램 작성 능력을 향상시키는 것을 목표로 한다. 이를 위해 본 교과목에서는 알고리즘의 성능 분석과 데이터 구조와 알고리즘을 설계하는데 필요한 주요 원리들을 다룬다. 그리고 스택과 큐의 개념 및 구현법을 배우며, 각종 연결리스트와 이진탐색 트리를 비롯한 다양한 트리에 대하여 학습한다. 그리고 컴퓨터에서 그래프를 표현하는 방법과 그래프를 관리하기 위한 알고리즘들을 배우며, 각종 정렬 알고리즘에 대하여 학습하고 이들을 직접 구현하여 각 정렬 알고리즘들의 성능을 비교 평가한다.</p><p lang="en">In this course, the students will learn various data structures and algorithms for implementing programs efficiently and correctly. The main objective of this course is to enhance program skills by actually implementing various data structures and algorithms. For this purpose, this course deals with performance analysis of algorithms and key principles for designing data structures and algorithms. This course covers various topics regarding conventional data structures and algorithms, such as the concept of stacks and queues, and their implementations, various linked lists, trees including the binary search tree. In addition, this course deals with the representation of graphs in computers and algorithms to manage graphs. This course also deals with various sorting algorithms, and performance evaluation of sorting algorithms by actually implementing them.</p></details></td><td data-l="학점">3</td><td data-l="이론">2</td><td data-l="실습">2</td></tr>
+            <tr><td>전공</td><td data-l="과목코드">340285</td><td class="nm"><span class="cu-n">고급프로그래밍언어실습(Advanced Language Lab)</span><details><summary>상세정보</summary><p>본 교과목에서는 C++ 프로그래밍을 위한 기본 개념을 학습한다. 자료형, 연산자, 함수, 제어문, 포인터, 구조체와 같은 C++의 기본 문법에 대하여 간단히 학습하고 객체지향 프로그래밍을 위한 캡슐화, 다형성, 상속, 클래스, 연산자중복, 템플릿 함수 및 템플릿 클래스, C++의 예외처리 기법에 대하여 학습한다. 그리고 본 교과목에서는 프로그램 실무능력을 향상시키기 위하여 강의 내용을 바탕으로 적절한 실습을 진행한다.</p><p lang="en">In this course, the students will learn basic concepts of programming using C++. This course deals with the basic grammars and syntaxes of C++ such as data types, operators, functions, control statements, pointers, and structures. The students also learn the advanced features of object-oriented programming, such as encapsulation, polymorphism, inheritance, classes. operator overloading, template function, template class, and exception handling. In this course students will perform appropriate projects based on the contents of lectures to enhance their programming practical abilities.</p></details></td><td data-l="학점">3</td><td data-l="이론">2</td><td data-l="실습">2</td></tr>
+            <tr><td>전공</td><td data-l="과목코드">340343</td><td class="nm"><span class="cu-n">컴퓨터설계실습(Lab of Computer Design)</span><details><summary>상세정보</summary><p>C 언어와 같은 고급 언어로 구성한 프로그램이 컴파일되어서, 컴퓨터 언어로 바뀌는 과정과 마이크프로세서에서 연산되는 과정을 이해한다. 또한 CPU 의 구성 및 동작 원리를 이해한다. Verilog 언어를 이용하여 간단한 8비트 마이크로프로세서를 구성하여 명령어가 컴퓨터 하드웨어에서 실행되는 과정을 실습한다.</p><p lang="en">The goal of this course is to understand how the high-level language is translated into the computer machine code and execute on the computer hardware. It also includes designing the digital circuit of CPU. The students will practice the design of simple 8bit microprocessor using Verilog behavioral language and verify the operation of instruction on the computer hardware.</p></details></td><td data-l="학점">3</td><td data-l="이론">2</td><td data-l="실습">2</td></tr>
+            <tr><td>전공</td><td data-l="과목코드">400189</td><td class="nm"><span class="cu-n">디지털공학실험(Digital Engineering Lab)</span><details><summary>상세정보</summary><p>게이트 AND, NAND 및 OR 논리소자에서 불 함수와 카르노 맵을 이용하여 기본적인 디지털 원리를 습득하고, 플립플롭 소자를 디지털 회로에 응용하는 방법을 익힌다. 그리고 실험실에서 카운터용 IC를 이용해 초시계를 구성한다. 또한, 디지털 소자 및 회로의 제반 원리가 어떻게 현실의 시스템에 활용되는 가를 배우고, 시뮬레이션 프로그램인 Logic Works를 이용하여 응용기술 및 방법 등을 실험으로 익힌다.</p><p lang="en">In our study, we introduce basic digital principles for logic circuit such as Boolean function and Karamaugh map etc, for the electric gates as AND, NAND and OR , and also learn how to applicate the method for Flip-Flop to digital circuitry. And we will connect the clock circuitry on a board using Integrated Circuit for the counter in the experiment Laboratory. And we study that how all of the theories about digital elements and circuitries utilized to the applications for real system, and also experiment on the application skills and the methods using the simulation program that is Logic Works in the laboratory.</p></details></td><td data-l="학점">3</td><td data-l="이론">2</td><td data-l="실습">2</td></tr>
+            <tr><td>전공</td><td data-l="과목코드">400491</td><td class="nm"><span class="cu-n">Java언어실습(Java Language)</span><details><summary>상세정보</summary><p>인터넷의 발전으로 인한 웹 프로그램의 대부분이 Java로 개발되어 언어의 확장성과 신뢰성에 대한 내용을 강의하고, 기본적인 구조와 문법들을 단계적으로 다루어, 웹 프로그래밍 능력을 배양하는데 중점을 둔다.</p><p lang="en">Due to the growth of the Internet for Web application development in Java Java programming is the most scalable and reliable information on language, phasing out the basic structure and grammar covered, web programming is focused to bulid programming capacity.</p></details></td><td data-l="학점">3</td><td data-l="이론">2</td><td data-l="실습">2</td></tr>
+            <tr><td>전공</td><td data-l="과목코드">402378</td><td class="nm"><span class="cu-n">리눅스기초(Basics of Linux)</span><details><summary>상세정보</summary><p>리눅스를 처음 배우는 학생을 대상으로 개념과 실습을 함께 공부함으로써 리눅스에 익숙하지 않아도 설치부터 쉽게 따라 할 수 있고 다양한 실습으로 디스크 관리, 네트워크 서버 구축, 보안 등의 실무까지 마스터할 수 있다.</p><p lang="en">By studying Linux concepts and practicing together, you can easily follow the installation even if you are not familiar with Linux. Through various hands-on exercises, you can even master the practicalities of disk management, network server construction, and security.</p></details></td><td data-l="학점">3</td><td data-l="이론">3</td><td data-l="실습">0</td></tr>
+            <tr><td>전공</td><td data-l="과목코드">402379</td><td class="nm"><span class="cu-n">전자회로이론및실습(Theory and Lab of electronics circuit)</span><details><summary>상세정보</summary><p>전자회로 기본 소자인 저항, 커패시터, 인덕터와 트랜지스터 소자의 동작 원리와 전자회로의 전류, 전압을 해석하고 설계하는 이론과 실습으로 구성하여 수업을 진행한다.</p><p lang="en">It provides the theory and practice of analyzing and designing the electronics circuit using resistor, capacitor and transistor.</p></details></td><td data-l="학점">3</td><td data-l="이론">2</td><td data-l="실습">2</td></tr>
+            <tr><td>전공</td><td data-l="과목코드">402380</td><td class="nm"><span class="cu-n">드론기초및코딩실습(Drone basics and programming practice)</span><details><summary>상세정보</summary><p>4차 산업혁명 시대의 핵심 요소 중 하나인 드론을 이해하고 기본 지식을 습득하며, 코딩 교육을 융합하여 학생들이 드론이 자율비행하게 하는 교육을 진행한다.</p><p lang="en">Students will learn drone basics, which is one of the key elements of the 4th industrial revolution, and make drones fly autonomously by programming practice</p></details></td><td data-l="학점">3</td><td data-l="이론">2</td><td data-l="실습">2</td></tr>
+            <tr><td>전공</td><td data-l="과목코드">402381</td><td class="nm"><span class="cu-n">빅데이터기초및실습(Big Data Analysis and Practice)</span><details><summary>상세정보</summary><p>본 강의에서는 파이썬 언어를 기반으로 데이터의 획득과 처리 및 분석, 시각화하는 방법과 인공지능의 머신러닝, 딥러닝에 대한 기초적인 내용을 다룬다. 이를 위해 Beautiful Soup, Matplotlib, Numpy, Pandas, Scikit-learn, Tensorflow 등의 데이터 사이언스의 주요 라이브러리들을 활용하여 실습한다.</p><p lang="en">This lecture covers the basics of data acquisition, processing, analysis, and visualization based on the Python language, as well as machine learning and deep learning of artificial intelligence. For this, we practice using major libraries of data science such as Beautiful Soup, Matplotlib, Numpy, Pandas, Scikit-learn, and Tensorflow.</p></details></td><td data-l="학점">3</td><td data-l="이론">2</td><td data-l="실습">2</td></tr>
+            <tr><td>전공</td><td data-l="과목코드">402383</td><td class="nm"><span class="cu-n">스마트운영체제론(Smart Operating System)</span><details><summary>상세정보</summary><p>정보통신학부의 스마트 IT 학부로의 개편에 따라 기존의 운영체제론 교과목에서 인공지능과 모바일 컴퓨팅의 새로운 스마트 IT 환경에 맞는 변화되고 있는 플랫폼에 적용되는 첨단의 운영체제 고급기술을 접목한 이론과 응용을 다루고자 한다.</p><p lang="en">With the reorganization of the Department of Information and Communication into the Department of Smart IT, we will deal with the theory and application of advanced operating system technologies applied to changing platforms suitable for the new smart IT environment of artificial intelligence and mobile computing.</p></details></td><td data-l="학점">3</td><td data-l="이론">3</td><td data-l="실습">0</td></tr>
+            <tr><td>전공</td><td data-l="과목코드">410264</td><td class="nm"><span class="cu-n">기초네트워킹이론및실습(Foundational Networking Theory Practice)</span><details><summary>상세정보</summary><p>본 교과목은 다양한 전송매체를 통한 데이터의 전송 및 인코딩 기법 등을 함께 배우며 네트워크 장비를 이용한 실습 과목으로서, 시스코 교육 프로그램(CCNA)의 sem1, sem2 과정으로 구성된다. 또한 본 과정에서는 전반적인 네트워크 개념을 이해하고, 라우팅 프로토콜에 대한 실습을 다룬다.</p><p lang="en">This course is a practical course using network equipment, learning data transmission and encoding techniques through various transmission media, and consists of sem1 and sem2 courses of the Cisco Education Program (CCNA). In addition, this course understands the overall network concept and deals with practice on routing protocols.</p></details></td><td data-l="학점">3</td><td data-l="이론">2</td><td data-l="실습">2</td></tr>
+          </tbody>
+          <tbody>
+            <tr class="cu-yr"><th scope="rowgroup" colspan="6">3학년</th></tr>
+            <tr><td>전공</td><td data-l="과목코드">340119</td><td class="nm"><span class="cu-n">데이터베이스(Database)</span><details><summary>상세정보</summary><p>본 교과목에서는 데이터베이스의 기본 개념 및 표준 데이터베이스 언어 SQL을 익히며 개체 관계 모델 및 정규화 기법에 기반을 둔 효율적인 데이터베이스 설계 방법등을 학습한다. 그리고 트랜잭션 처리의 핵심 기술인 동시성 제어 및 회복 관리에 관한 기법들에 대하여 배운다. 그리고 JDBC(Java Database Connectivity)와 PHP와 같은 기존의 프로그래밍 언어와 SQL문을 결합하여 데이터베이스 프로그램을 작성하는 법을 배운다. 그리고 데이터베이스 프로그래밍 능력을 향상시키기 위하여 교과 과정에 적절한 데이터베이스 관련 프로젝트를 수행한다.</p><p lang="en">Theoretical understanding and programming method of database management systems with query languages and a motive of concept is given and applications for database development are included. The applying of object-oriented concept developed except for text driven programming and other concepts of database management type are supplemented during the corresponding semester.</p></details></td><td data-l="학점">3</td><td data-l="이론">3</td><td data-l="실습">0</td></tr>
+            <tr><td>전공</td><td data-l="과목코드">340359</td><td class="nm"><span class="cu-n">웹프로그래밍실습(Web Programming Practice)</span><details><summary>상세정보</summary><p>웹프로그래밍실습 과정에서는 표준 웹프로그래밍 기술을 기반으로 N-Tier 플랫폼 환경인 Java EE 프레임워크 상에서 통합개발도구를 이용하여 관리자 교육 및 스킬을 연마하는 교육과정이다. 또한 미들티어인 WAS(Web Application Server)와 대용량 데이터베이스를 이용한 분산웹 프로그래밍 기술을 습득하는 교육과정이다.</p><p lang="en">In the web programming practice course, based on standard web programming technology, it is a training course to train administrators and hone their skills using Integrated Development &amp; Environment(IDE) Tools on the Java EE framework, an N-tier platform environment. It is also a training course to acquire distributed web programming skills using the middle tier WAS(Web Application Server) and bigdata database.</p></details></td><td data-l="학점">3</td><td data-l="이론">2</td><td data-l="실습">2</td></tr>
+            <tr><td>전공</td><td data-l="과목코드">400191</td><td class="nm"><span class="cu-n">소프트웨어설계(Software Design)</span><details><summary>상세정보</summary><p>신뢰도가 높은 소프트웨어를 효과적으로 개발하는데 요구되는 기본개념을 개발 방법론, 생명주기모델, 프로세스단계별 기법, 자동화 도구, 프로젝트 관리 기술 등을 중심으로 학습하고, UML을 기반으로 하는 Object-Oriented 및 Component-Based 소프트웨어 공학 기법을 CASE 도구를 사용하여 사례를 분석한다. 또한 최신 정보처리기사 소프트웨어공학 과목의 기출문제와 경향성을 분석하여 자격증 시험에 대비할 수 있도록 훈련학 수 있도록 한다.</p><p lang="en">The basic concepts required to develop reliable software effectively are learned around development methodologies, life cycle models, process step-by-step techniques, automation tools, and project management techniques, and the case is analyzed using CASE tools. In addition, by analyzing the past questions and trends of the latest information processing technician software engineering subjects, training can be performed to prepare for the certification test.</p></details></td><td data-l="학점">3</td><td data-l="이론">3</td><td data-l="실습">0</td></tr>
+            <tr><td>전공</td><td data-l="과목코드">401916</td><td class="nm"><span class="cu-n">정보보호이론및실습(Information Security Theory and Practice)</span><details><summary>상세정보</summary><p>정보보호이론과실습은 정보의 개념과 활용, 암호학, 보안프로토콜 등으로 구성되어 있다. 특히, 차세대 4차산업혁명 시대에 꼭 필요한 보안의 특성과 대비 방법 및 기초이론을 집중 연구하여 학생으로 하여금 미래를 대비한 보안 분야의 다양한 전문적 소양을 갖게 하고자 한다. 이런 분야의 필요 기술인 암호이론과 IPSeC, SSL 등 현재에서 운영되는 보안 프로토콜 등의 특성을 보는 것이 본 교과목의 주요 내용이다.</p><p lang="en">Information security theory and practice consist of information concept and application, cryptography, and security protocol. In particular, by focusing on the characteristics of security, methods, and basic theory that are essential to the Fourth Industrial Revolution generation, students are encouraged to have diverse expertise in the future-ready security field. The main content of this textbook is to see the characteristics of cryptographic theory, which is necessary technology in these fields, and security protocols that are currently operated by IPSeC and SSL.</p></details></td><td data-l="학점">3</td><td data-l="이론">2</td><td data-l="실습">2</td></tr>
+            <tr><td>전공</td><td data-l="과목코드">402382</td><td class="nm"><span class="cu-n">AR/VR이론및실습(AR/VR Theory &amp; Practice)</span><details><summary>상세정보</summary><p>4차산업 혁명 및 메타버스(Metaverse)의 핵심기술인 가상현실과 증강현실의 원리와 이론을 이해하고 유니티 기반의 가상현실 프로그램을 실제로 실습하여 채득한다.</p><p lang="en">Understand the principles and theories of virtual reality and augmented reality, the core technologies of the 4th industrial revolution and Metaverse, and practice and acquire Unity-based virtual reality programs.</p></details></td><td data-l="학점">3</td><td data-l="이론">2</td><td data-l="실습">2</td></tr>
+            <tr><td>전공</td><td data-l="과목코드">402384</td><td class="nm"><span class="cu-n">스마트모바일프로그래밍실습(Smart Mobile Programming Lab)</span><details><summary>상세정보</summary><p>본 교과목은 스마트폰의 응용 프로그램을 개발하기 위하여 안드로이드의 개념 및 구조, 프로그래밍 방법에 대하여 학습한다. 본 교과목은 사용자 인터페이스, 이벤트와 이벤트 리스너, 고급 위젯, 액티비티와 인텐트 등을 다룬다. 그리고 위치기반 앱, 데이터베이스 프로그래밍, 멀티미디어 데이터 처리 방법 및 모바일 기기의 각종 센서들을 활용하는 법을 다룬다. 본 교과목에서는 모바일 프로그램 개발 능력을 함양하기 위하여 강의 내용을 바탕으로 적절한 실습을 진행한다.</p><p lang="en">In this course, students learn the concepts, structure, and programming method of Android in order to develop smartphone application programs. This course deals with user interfaces, event and event listener, advanced widgets, and activities and intents. This course also deals with location-based apps, database programming, multimedia data processing methods, and how to utilize various sensors of mobile devices. In this course, students performs appropriate practical exercises based on the contents of lectures to enhance their mobile program development capabilities.</p></details></td><td data-l="학점">3</td><td data-l="이론">2</td><td data-l="실습">2</td></tr>
+            <tr><td>전공</td><td data-l="과목코드">402385</td><td class="nm"><span class="cu-n">기계학습프레임워크(Machine Learning Framework)</span><details><summary>상세정보</summary><p>본 강의에서는 현재 인공지능의 핵심인 기계학습의 전반적인 이론과 응용을 다룬다. 또한 실제 활발하게 사용되고 있는 오픈소스 프레임워크인 Tensorflow, PyTorch 등을 활용하여 자신만의 기계학습 응용 서비스를 만들어 보는 실습을 진행한다.</p><p lang="en">This lecture deals with the overall theory and application of machine learning, which is the core of current artificial intelligence. In addition, we will practice creating our own machine learning service using open source frameworks such as Tensorflow and PyTorch that are actively used in practice.</p></details></td><td data-l="학점">3</td><td data-l="이론">3</td><td data-l="실습">0</td></tr>
+            <tr><td>전공</td><td data-l="과목코드">402386</td><td class="nm"><span class="cu-n">스마트신호처리설계및실습(Design and Lab of smart signal processing)</span><details><summary>상세정보</summary><p>스마트폰과 디지털 IT 제품의 신호처리와 관련된 기본원리와 응용에 대한 이론 강의와 파이썬을 이용한 신호처리 실습을 병행하는 구성으로 진행한다.</p><p lang="en">It provides the theory and practice of signal processing in the smart phone with Python high_level language.</p></details></td><td data-l="학점">3</td><td data-l="이론">2</td><td data-l="실습">2</td></tr>
+            <tr><td>전공</td><td data-l="과목코드">402387</td><td class="nm"><span class="cu-n">통신이론및실습(Communication Theory &amp; Practice)</span><details><summary>상세정보</summary><p>통신의 기본개념인 신호의 생성, 아날로그와 디지털통신의 원리, 변조방법 및 신호의 해석방법을 이론으로 배우고, 동시에 Matlab으로 실습함으로써 그 동작원리을 학생들 스스로가 체득할 수 있도록 한다.</p><p lang="en">Understand the basic concept of communication, signal generation, analog and digital communication principles, modulation methods, and signal interpretation methods. By practicing with Matlab, students can learn the principle of operation by themselves.</p></details></td><td data-l="학점">3</td><td data-l="이론">2</td><td data-l="실습">2</td></tr>
+            <tr><td>전공</td><td data-l="과목코드">402388</td><td class="nm"><span class="cu-n">스마트IT캡스톤디자인I(Smart IT Capstone Design I)</span><details><summary>상세정보</summary><p>스마트IT캡스톤디자인 수업은 학부교육과정을 통해 배운 지식과 정보통신 분야 산업의 이해를 바탕으로 학생들이 주도적으로 IT 관련 제품을 기획하고 제작하여 창의적 종합 설계 능력 함양 및 스스로 문제해결 프로세스를 경험할 수 있도록 한다. 스마트IT캡스톤디자인I은 졸업작품을 기획하고, 프로젝트 계획서를 작성하고, 논리적으로 발표하는데 초점을 둔다.</p><p lang="en">The Smart IT Capstone Design class is designed to help students develop creative and comprehensive design skills and experience the problem-solving process on their own by planning and manufacturing IT-related products based on the knowledge learned through the undergraduate curriculum. Smart IT Capstone Design I focuses on planning senior project.</p></details></td><td data-l="학점">2</td><td data-l="이론">1</td><td data-l="실습">2</td></tr>
+            <tr><td>전공</td><td data-l="과목코드">410265</td><td class="nm"><span class="cu-n">고급네트워킹이론및실습(Advanced Networking Theory Practice)</span><details><summary>상세정보</summary><p>본 교과목은 인터넷 기술을 심도 있게 다루는 학부 수준의 고급과정으로서, 시스코 교육 프로그램(CCNA)의 sem3, sem4 과정으로 구성된다. 또한 본 과정에서는 스위치, 라우터, 무선 라우터 등의 장비에 대한 이해와 WAN 과 관련된 기술을 배운다.</p><p lang="en">This course is an advanced course at the undergraduate level that deals with Internet technology in depth and consists of sem3 and sem4 courses of the Cisco Education Program (CCNA). In addition, in this course, you will learn the understanding of equipment such as switches, routers, and wireless routers and skills related to WAN.</p></details></td><td data-l="학점">3</td><td data-l="이론">2</td><td data-l="실습">2</td></tr>
+          </tbody>
+          <tbody>
+            <tr class="cu-yr"><th scope="rowgroup" colspan="6">4학년</th></tr>
+            <tr><td>전공</td><td data-l="과목코드">402389</td><td class="nm"><span class="cu-n">스마트모빌리티인공지능실습(AI for smart mobility)</span><details><summary>상세정보</summary><p>4차 산업혁명 시대에 인공지능과 자율주행차, 자율비행드론 등 스마트모빌리티의 융합이 중요하게 대두되고 있다. 본 교과과정에서는 딥러닝의 이론과 영상처리 등 스마트모빌리티에서 요구하는 인공지능응용 기술을 배우고 실습한다.</p><p lang="en">In the era of the 4th industrial revolution, the convergence of artificial intelligence and smart mobility such as self-driving cars, and autonomous flying drones is emerging as important. Students will learn and practice artificial intelligence application techniques required for smart mobility.</p></details></td><td data-l="학점">3</td><td data-l="이론">2</td><td data-l="실습">2</td></tr>
+            <tr><td>전공</td><td data-l="과목코드">402391</td><td class="nm"><span class="cu-n">인공지능사이버보안(AI in Cybersecurity)</span><details><summary>상세정보</summary><p>사이버보안에 적용되는 인공지능 기술을 다루고 관련 미래를 전망하는 교과목이다.</p><p lang="en">This course deals with artificial intelligence technology applied to cybersecurity and forecasts the related future.</p></details></td><td data-l="학점">3</td><td data-l="이론">3</td><td data-l="실습">0</td></tr>
+            <tr><td>전공</td><td data-l="과목코드">402392</td><td class="nm"><span class="cu-n">차세대이동통신(Next Generation Mobile Communication)</span><details><summary>상세정보</summary><p>4차 산업혁명의 다양한 응용분야에 기반기술로 필수적인 5G 이동통신기술과 그 응용분야를 이해함으로써 미래의 유망 기술분야를 사전에 선점할 수 있는 직관력과 응용능력을 기른다.</p><p lang="en">Understand 5G mobile communication technology and its applications, which are essential as a base technology for various application fields of the 4th industrial revolution. Based on this, develop intuition and application ability to preempt future promising technology fields.</p></details></td><td data-l="학점">3</td><td data-l="이론">3</td><td data-l="실습">0</td></tr>
+            <tr><td>전공</td><td data-l="과목코드">402393</td><td class="nm"><span class="cu-n">스마트모바일컴퓨팅(Smart Mobile Computing)</span><details><summary>상세정보</summary><p>스마트모바일컴퓨팅 과정은 모바일 앱과 웹 앱, 데스크톱 앱의 단일 코드 베이스로 개발할 수 있는 크로스 플랫폼 환경의 플러터을 기반으로 iOS과 Android 기반으로 동일하게 모바일프로그래밍 기술을 함양하는 교육과정이다.</p><p lang="en">The Smart Mobile Computing course is a curriculum that cultivates mobile programming skills equally based on iOS and Android based on Flutter in a cross-platform environment that can be developed with a single code base of mobile apps, web apps, and desktop apps.</p></details></td><td data-l="학점">3</td><td data-l="이론">3</td><td data-l="실습">0</td></tr>
+            <tr><td>전공</td><td data-l="과목코드">402394</td><td class="nm"><span class="cu-n">스마트IT캡스톤디자인Ⅱ(Smart IT Capstone Design Ⅱ)</span><details><summary>상세정보</summary><p>스마트IT캡스톤디자인 수업은 학부교육과정을 통해 배운 지식과 정보통신 분야 산업의 이해를 바탕으로 학생들이 주도적으로 IT 관련 제품을 기획하고 제작하여 창의적 종합 설계 능력 함양 및 스스로 문제해결 프로세스를 경험할 수 있도록 한다. 스마트IT캡스톤디자인II는 졸업작품을 실제 구현하고 발표하는데 초점을 둔다.</p><p lang="en">The Smart IT Capstone Design class is designed to help students develop creative and comprehensive design skills and experience the problem-solving process on their own by planning and manufacturing IT-related products based on the knowledge learned through the undergraduate curriculum. Smart IT Capstone Design Ⅱ focuses on implementing senior project.</p></details></td><td data-l="학점">2</td><td data-l="이론">1</td><td data-l="실습">2</td></tr>
+            <tr><td>전공</td><td data-l="과목코드">402395</td><td class="nm"><span class="cu-n">차세대인공지능(The Next Generation of Artificial Intelligence)</span><details><summary>상세정보</summary><p>AI는 거의 모든 분야에 적용될 것으로 예상되어 글로벌 기업들은 주도권 확보와 생태계 확대를 위한 전략을 적극 추진중이다. 본 교과에서는 최신 인공지능 기술 트렌드 및 시장 전망을 알아보고 AI 보급과 기술진전에 따른 부정적 요소에 대해 비판적으로 토의한다.</p><p lang="en">As AI is expected to be applied to almost all fields, global companies are actively pursuing strategies to secure leadership and expand ecosystems. This course examines the latest artificial intelligence technology trends and market prospects, and critically discusses the negative factors associated with AI dissemination and technological progress.</p></details></td><td data-l="학점">3</td><td data-l="이론">3</td><td data-l="실습">0</td></tr>
+            <tr><td>전공</td><td data-l="과목코드">402396</td><td class="nm"><span class="cu-n">정보통신인공지능(AI for ICT)</span><details><summary>상세정보</summary><p>4차 산업혁명 시대에 맞춰 스마트IT학부는 인공지능응용학과 정보통신학으로 전공 트랙을 개편하였으며, 정보통신에 활용되는 인공지능의 역할이 커지고 있다. 본 교과목에서는 정보통신 분야를 심층 분석하고 각 분야에서 적용되는 인공지능 기술들을 학습하고 실습을 진행한다.</p><p lang="en">In line with the era of the 4th industrial revolution, the School of Smart IT has reorganized its major tracks into AI Applications and Information and Communication Systems, and the role of AI in information and communication systems is growing. Students will conduct in-depth analysis of information and communication fields, and practice AI technologies applied in each field.</p></details></td><td data-l="학점">3</td><td data-l="이론">3</td><td data-l="실습">0</td></tr>
+            <tr><td>전공</td><td data-l="과목코드">402397</td><td class="nm"><span class="cu-n">AI응용플랫폼실습(Practice of AI Application Platform)</span><details><summary>상세정보</summary><p>AI 스마트IT 환경에 필요한 하나의 소스로 다양한 플랫폼에 지원하는 클라우드 및 도커 서버 구축 실습을 실무 프로젝트 중심으로 스킬을 함양하는 교육과정이다. 특히 웹/모바일 표준 지원과 웹 접근성을 기반으로 다중 디바이스 개발 생산성을 보장하는 역량중심의 교육과정이다.</p><p lang="en">It is a training course that cultivates skills centered on practical projects through Cloud and Docker Server construction practice that supports various platforms as a single source for AI SmartIT environment. In particular, it is a competency-oriented curriculum that guarantees multi-device development productivity based on web standards support and web accessibility.</p></details></td><td data-l="학점">3</td><td data-l="이론">2</td><td data-l="실습">2</td></tr>
+            <tr><td>전공</td><td data-l="과목코드">402398</td><td class="nm"><span class="cu-n">스마트IT실무체험(Smart IT Hand-on experience)</span><details><summary>상세정보</summary><p>정보통신 및 인공지능응용 전공 관련 실무 체험을 제공하여, 전공 관련 직무역량을 파악하고 준비하도록 특강, 기업 방문으로 진행한다.</p><p lang="en">It provides the hand-on experience for the smart IT industry with visiting IT companies and special lectures.</p></details></td><td data-l="학점">2</td><td data-l="이론">1</td><td data-l="실습">2</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <aside class="pageinfo" aria-label="페이지 정보">
+        <form class="survey" onsubmit="return false">
+          <b id="sv-q">이 페이지에서 제공하는 정보에 대하여 만족하시나요?</b>
+          <span class="sv-opts" role="radiogroup" aria-labelledby="sv-q">
+            <label><input type="radio" name="point" value="5">매우만족</label>
+            <label><input type="radio" name="point" value="4">만족</label>
+            <label><input type="radio" name="point" value="3">보통</label>
+            <label><input type="radio" name="point" value="2">불만족</label>
+            <label><input type="radio" name="point" value="1">매우불만족</label>
+          </span>
+          <button type="submit">등록하기</button>
+        </form>
+      </aside>
+    </main>
+  </div>
+</div>
+
+<footer class="foot">
+  <div class="foot-in">
+    <b>세명대학교 스마트IT학부</b>
+    <span>27136 충청북도 제천시 세명로 65 (신월동) 세명대학교 스마트IT학부 첨단정보학관 423호 · TEL 043-649-1747 · FAX 043-649-1747</span>
+    <nav aria-label="바닥글 링크">
+      <a href="https://www.semyung.ac.kr/kor/sitemap_15.do" target="_blank" rel="noopener">개인정보처리방침</a>
+      <a href="https://www.semyung.ac.kr/kor/sitemap_16.do" target="_blank" rel="noopener">이메일무단수집거부</a>
+      <a href="https://www.semyung.ac.kr/kor/sub01_06_02.do" target="_blank" rel="noopener">찾아오시는 길</a>
+      <a href="https://www.semyung.ac.kr/smartit/sitemap_11.do" target="_blank" rel="noopener">사이트맵</a>
+    </nav>
+    <span class="copy">COPYRIGHT (C) 2017 Semyung University ALL RIGHTS RESERVED.</span>
+  </div>
+</footer>
+
+<details class="proto">
+  <summary>PROTOTYPE 09 · 서브</summary>
+  <div class="in">
+<!--PROTO:BEGIN-->
+    <div class="row" role="group" aria-label="서브 화면: SMIT 소개">
+      <a href="about.html">학부소개</a><a href="greeting.html">인사말</a><a href="history.html">연혁</a><a href="faculty.html">교수소개</a>
+    </div>
+    <div class="row" role="group" aria-label="서브 화면: SMIT 교육">
+      <a href="goal.html">교육목표</a><a href="curriculum.html" aria-current="page">교육과정</a><a href="roadmap.html">체계도</a>
+    </div>
+    <div class="row" role="group" aria-label="서브 화면: SMIT 취업">
+      <a href="employ.html">SMIT 취업</a><a href="recruit.html">채용공고</a><a href="career.html">진로와 취업</a>
+    </div>
+    <div class="row" role="group" aria-label="서브 화면: SMIT 소식">
+      <a href="notice.html">공지 목록</a><a href="notice.html#n486428">공지 본문</a><a href="gallery.html">갤러리</a><a href="gallery.html#g486440">갤러리 본문</a><a href="contest.html">경진대회</a><a href="club.html">동아리</a>
+    </div>
+    <div class="row" role="group" aria-label="서브 화면: SMIT 입학">
+      <a href="admission.html">입학정보</a>
+    </div>
+<!--PROTO:END-->
+    <div class="row"><button type="button" id="p-sweep" aria-pressed="true">빛줄 켬</button></div>
+  </div>
+</details>
+<script src="sub.js"></script>
+</body>
+</html>

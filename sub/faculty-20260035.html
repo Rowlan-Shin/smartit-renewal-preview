@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>신용제 교수 · 교수소개 · 세명대학교 스마트IT학부</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,500;125,600;125,700&display=block">
+<link rel="preload" href="../fonts/pretendard-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/pretendard-500.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/pretendard-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/pretendard-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/pretendard-800.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="sub.css">
+<meta name="theme-color" content="#03080b">
+<style>@view-transition { navigation: auto; } @media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }</style>
+<script>
+// 웹 1차본 연결 장치 05(피드백 6, 10-17 — tools/build_site.py가 단다): 메인에서 넘어올 때만 이 쪽 전체가 아래에서 올라온다(sub.css vt-up). 서브끼리는 전환하지 않는다
+// 세션 17(10-17) 게시 틀 보정 — claude.ai 아티팩트 틀에서만 생기던 결함(설명 = 메인 머리 스크립트 — 1차본 main.html, 원본 proto-07-zoom/index.html):
+//  ① 틀의 스크롤 기억 sessionStorage '__frame_scroll'(쪽과 상관없이 높이 하나)을 틀이 읽기 전에 지운다 — 메인 높이가 옮겨져 이 쪽이 맨 아래부터 보였다
+//  ② 틀은 no-referrer라 주소로 '메인에서 왔는지'를 못 가린다 → 떠나는 쪽이 남긴 표 'smit.from'(15초 안)을 쓰고, 이 쪽을 떠날 때 {k: 'sub'}를 남긴다
+try { sessionStorage.removeItem('__frame_scroll'); } catch (err) { }
+const vtFrom = () => { try { const f = JSON.parse(sessionStorage.getItem('smit.from') || 'null'); sessionStorage.removeItem('smit.from'); return f && Date.now() - f.t < 15000 ? f.k : ''; } catch (err) { return ''; } };
+const vtMark = () => { try { sessionStorage.setItem('smit.from', JSON.stringify({ k: 'sub', t: Date.now() })); } catch (err) { } };
+let vtHanded = vtFrom();   // 떠난 쪽 표('main' | 'sub' | '') — 처음 열 때 한 번 읽고 지운다
+// 세션 18(검증 3라운드 GPT 권고): 이 쪽에서 마지막으로 쓴 입력 방식을 남긴다 → 메인으로 뒤로 돌아오면 그 방식을 이어받는다(메인 머리 스크립트 — 포커스·테두리를 돌려줄지)
+// 키보드로 세는 키는 메인과 같다: Tab · Enter · 버튼·링크 위 Space(검증 4라운드 GPT·Opus — 서브만 Space를 안 셌다)
+addEventListener('pointerdown', () => { try { sessionStorage.setItem('smit.inp', 'pointer'); } catch (err) { } }, true);
+addEventListener('keydown', e => {
+  const t = e.target, ctl = t && t.closest && t.closest('a[href], button, summary, [role="button"], [tabindex]:not([tabindex="-1"])');
+  if (e.key === 'Tab' || e.key === 'Enter' || (e.key === ' ' && ctl)) try { sessionStorage.setItem('smit.inp', 'key'); } catch (err) { }
+}, true);
+addEventListener('pageswap', () => vtMark()); addEventListener('pagehide', () => vtMark());
+document.addEventListener('click', e => {   // 누르는 순간에도 남긴다(pageswap보다 먼저) — 새 창 열기(가운데 단추·Ctrl·Shift 등)·다른 사이트는 빼고
+  const a = e.target.closest ? e.target.closest('a[href]') : null;
+  if (a && e.button === 0 && !(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) && (!a.target || a.target === '_self') && a.origin === location.origin) vtMark();
+}, true);
+let bfRestored = false;   // 뒤로·앞으로 캐시(bfcache)에서 되살아남 — pageshow(persisted)가 pagereveal보다 먼저 온다. 그때는 떠난 쪽 표를 새로 읽는다
+addEventListener('pageshow', e => { if (e.persisted) { bfRestored = true; vtHanded = vtFrom(); } });
+addEventListener('pagereveal', e => {
+  if (!e.viewTransition) return;
+  let from = '', main = false;
+  try {
+    const a = window.navigation && navigation.activation;
+    if (a) from = a.from ? a.from.url : '';
+    else { const n = performance.getEntriesByType('navigation')[0]; if (!(n && n.type === 'back_forward') && !bfRestored) from = document.referrer; }   // Navigation API가 없으면 이력 이동(새로 연 쪽·bfcache 되살림)의 referrer는 직전 쪽이 아닐 수 있어 전환하지 않는다(GPT 검수 R-01 · 2라운드)
+  } catch (err) { }
+  bfRestored = false;
+  try { const u = new URL(from); main = u.origin === location.origin && !/\/sub\//.test(u.pathname); } catch (err) { }
+  if (!from && vtHanded === 'main') main = true;   // 게시 틀 보정 ②: 주소가 비면(no-referrer 틀 · 이력 이동) 떠난 쪽이 남긴 표로
+  window.__vt = { main, t: Math.round(performance.now()) };   // 시험용(tools/test_site.py · capture_transition.py): t = 이 쪽 열기 시작부터 공개까지(ms)
+  if (!main) { e.viewTransition.ready.catch(() => {}); e.viewTransition.skipTransition(); return; }   // 건너뛰면 ready가 거부된다 — 받아 두어 콘솔 오류를 내지 않는다
+  document.documentElement.classList.add('vt-up');
+  e.viewTransition.finished.finally(() => document.documentElement.classList.remove('vt-up'));
+});
+</script>
+</head>
+<!-- 시안 9 서브 화면: 교수 상세(신용제). 값 = 현행 교수 상세 원문(https://www.semyung.ac.kr/prog/profsrIntrcn/smartit/MC50/sub01_03/view.do?jikwon_no=20260035&amp;pageIndex=1, 2026-10-16 수집)
+     → tools/extract_prof_view.py → tools/build_prof_detail.py가 만든다(손으로 고치지 않는다). 껍데기는 faculty.html과 같다. -->
+<body data-page="faculty">
+<a class="skip" href="#main">본문 바로가기</a>
+<section class="band" aria-label="머리 띠">
+  <img class="bg-full" src="media/band_bg_ch1.jpg" alt="" aria-hidden="true">
+  <div class="stage" aria-hidden="true">
+    <img class="st-bg" src="media/band_bg_ch1.jpg" alt="">
+    <img class="st-glass" src="media/band_glass_ch1.webp" alt="">
+    <video class="st-sweep" id="st-sweep" src="media/band_sweep.mp4" muted loop autoplay playsinline preload="auto"></video>
+  </div>
+  <div class="shade" aria-hidden="true"></div>
+  <header class="top">
+    <a class="brand" href="../main.html"><small>세명대학교</small><b>스마트IT학부</b></a>
+<!--GNB:BEGIN-->
+    <nav class="gnb" aria-label="주 메뉴">
+      <a href="about.html" aria-current="true">SMIT 소개</a>
+      <a href="goal.html">SMIT 교육</a>
+      <a href="employ.html">SMIT 취업</a>
+      <a href="notice.html">SMIT 소식</a>
+      <a href="admission.html">SMIT 입학</a>
+    </nav>
+<!--GNB:END-->
+    <button class="menu-btn" type="button">메뉴</button>
+  </header>
+  <div class="title">
+    <a class="kicker" href="../main.html#about" title="메인 01 SMIT 소개 장으로"><b>01</b><span class="k-t"><span class="k-ko">SMIT 소개</span><span class="k-sep"> · </span><span class="k-en">About</span></span></a>
+    <h1>교수소개</h1>
+    <div class="t-line" aria-hidden="true"></div>
+    <p class="crumb"><a href="../main.html">HOME</a> › SMIT 소개 › <a href="faculty.html">교수소개</a> › 신용제</p>
+  </div>
+</section>
+
+<div class="paper">
+  <div class="wrap">
+<!--LNB:BEGIN-->
+    <nav class="lnb" aria-label="SMIT 소개 하위 메뉴">
+      <h2>SMIT 소개</h2>
+      <ul>
+        <li><a href="about.html">학부소개</a></li>
+        <li><a href="greeting.html">학부장 인사말</a></li>
+        <li><a href="history.html">학부연혁</a></li>
+        <li class="on"><a href="faculty.html" aria-current="true">교수소개</a></li>
+      </ul>
+    </nav>
+<!--LNB:END-->
+
+    <main class="main" id="main">
+      <a class="to-list" href="faculty.html"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3.5 5.5 8l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>교수소개 목록</a>
+      <article class="pf" aria-labelledby="pf-name">
+        <header class="pf-head">
+          <div class="pf-photo"><img src="media/prof/20260035.jpg" alt="신용제 교수 사진" width="480" height="640" decoding="async"></div>
+          <div class="pf-id">
+            <p class="pf-pos">교수</p>
+            <h2 id="pf-name">신용제</h2>
+            <p class="pf-en" lang="en">Yongje Shin</p>
+            <p class="pf-dept">AI융합대학 스마트IT학부</p>
+          </div>
+          <dl class="pf-contact">
+            <div><dt>연구실</dt><dd>첨단정보학관 4층 415호</dd></div>
+            <div><dt>전화</dt><dd><a href="tel:043-649-1278">043-649-1278</a></dd></div>
+            <div><dt>이메일</dt><dd class="mail"><a href="mailto:dudujr@semyung.ac.kr">dudujr<wbr>@semyung.ac.kr</a></dd></div>
+          </dl>
+        </header>
+
+        <section class="pf-courses" aria-labelledby="pf-c-h">
+          <h3 id="pf-c-h">담당과목</h3>
+          <ul class="pf-chips"><li>인공지능첫걸음</li><li>리눅스기초</li><li>정보통신인공지능</li><li>알기쉬운인공지능</li><li>스마트IT캡스톤디자인</li><li>정보통신회로설계</li></ul>
+        </section>
+
+<nav class="pf-toc" aria-label="쪽 안 차례">
+  <ol><li><a href="#pf-A"><span class="i" aria-hidden="true">01</span>학위및약력</a></li><li><a href="#pf-C"><span class="i" aria-hidden="true">02</span>연구분야</a></li><li><a href="#pf-D"><span class="i" aria-hidden="true">03</span>논문</a></li><li><a href="#pf-F"><span class="i" aria-hidden="true">04</span>산학협력(연구과제)</a></li></ol>
+</nav>
+
+<section class="pf-sec" id="pf-A" aria-labelledby="pf-A-h">
+  <h3 id="pf-A-h">학위및약력</h3>
+  <div class="pf-body">
+    <h4>학위</h4>
+    <ul><li>충북대학교 정보통신공학 학사</li><li>충북대학교 전파통신공학 석사</li><li>충북대학교 전파통신공학 박사</li></ul>
+    <h4>약력</h4>
+    <ul><li>2022년 03월 ~ 2022년 11월 : 충북대학교 컴퓨터정보통신연구소 Post-doc</li><li>2022년 12월 ~ 2026년 02월 : 충북대학교 전파통신공학 Post-doc</li><li>2026년 03월 ~  : 세명대학교 스마트IT학부 조교수</li><li>2026년 03월 ~  : 세명대학교 ANCHOR사업단 전문위원 (인공지능(AI)·모빌리티 R&amp;BD)</li></ul>
+    <p>교수 홈페이지 <a href="https://yongjeshin-smu-smit.vercel.app/" target="_blank" rel="noopener">https://yongjeshin-smu-smit.vercel.app/<span class="sr">(새 창)</span></a></p>
+  </div>
+</section>
+<section class="pf-sec" id="pf-C" aria-labelledby="pf-C-h">
+  <h3 id="pf-C-h">연구분야</h3>
+  <div class="pf-body">
+    <h4>1. 연구분야</h4>
+    <ul><li>차량 네트워크 및 사물 인터넷 (VANET &amp; Internet of Vehicles), 모바일 멀티미디어 스트리밍 및 콘텐츠 전송 (Multimedia Streaming &amp; Content Delivery), 차량 엣지 컴퓨팅 및 지능형 캐싱 (Vehicular Edge Computing &amp; Intelligent Caching), 군집 AI알고리즘 기반 네트워크 최적화 (Network Optimization via Swarm Intelligence)</li></ul>
+  </div>
+</section>
+<section class="pf-sec" id="pf-D" aria-labelledby="pf-D-h">
+  <h3 id="pf-D-h">논문</h3>
+  <div class="pf-body">
+    <h4 class="caps" lang="en">INTERNATIONAL JOURNALS PAPERS</h4>
+    <ol class="refs"><li><span class="no">[20]</span> <span class="tx">Shin Y, Choi H, Nam Y, Lee E. PSO-Based Dynamic RSU Role Assignment Framework for Scalable and Reliable Content Delivery in VANETs. Sensors. 2026; 26(5):1555. <a href="https://doi.org/10.3390/s26051555" target="_blank" rel="noopener">https://doi.org/10.3390/s26051555<span class="sr">(새 창)</span></a></span></li><li><span class="no">[19]</span> <span class="tx">Nam, Y., Shin, Y., Choi, H., &amp; Lee, E. (2026). Precaching vehicle selection based on soft actor-critic in CIoV. AIMS Mathematics, 11(2), 3314-3348. doi:<a href="https://doi.org/10.3934/math.2026135" target="_blank" rel="noopener">https://doi.org/10.3934/math.2026135<span class="sr">(새 창)</span></a></span></li><li><span class="no">[18]</span> <span class="tx">Shin, Y ; Lee, J ; Lee, E. (2025, Jun). Energy Balancing and Lifetime Extension: A Random Quorum-Based Sink Location Service Scheme for Wireless Sensor Networks. MDPI Sensors 26(13, 4078)</span></li><li><span class="no">[17]</span> <span class="tx">Shin, Y ; Choi, HS ; Nam, Y ; Lee, E. (2025, Dec). Particle Swarm Optimization-Based Content Delivery Protocol for UAV VAENTs. IEEE Access 13(1594-1608)</span></li><li><span class="no">[16]</span> <span class="tx">Mugerwa, D ; Nam, Y ; Choi, H ; Shin, Y ; Lee, E. (2024, Jun). Adaptive Mobility-Based IoT LoRa Clustering Communication Scheme. MDPI Electronics 13(11, 2052)</span></li><li><span class="no">[15]</span> <span class="tx">Nam, Y ; Bang, J ; Choi, H ; Shin, Y ; Oh, S ; Lee, E. (2023, Jul). Multiple Precaching Vehicle Selection Scheme Based on Set Ranking in Intermittently Connected Vehicular Networks. MDPI Sensors 23(13, 5800)</span></li><li><span class="no">[14]</span> <span class="tx">Mugerwa, D ; Nam, Y ; Choi, H ; Shin, Y ; Lee, E. (2023, Apr). Implicit Overhearing Node-Based Multi-Hop Communication Scheme in IoT LoRa Networks. MDPI Sensors 23(8, 3874)</span></li><li><span class="no">[13]</span> <span class="tx">Nam, Y ; Choi, H ; Shin, Y ; Lee, E. (2023, May). Traffic Optimized Content Precaching Scheme Based on Tolerable Delay Time in Content-Centric Vehicular Networks. IEEE Access 11(53862-53879)</span></li><li><span class="no">[12]</span> <span class="tx">Mugerwa, D ; Nam, Y ; Choi, H ; Shin, Y ; Lee, E. (2022, Dec). SF-Partition-Based Clustering and Relaying Scheme for Resolving Near-Far Unfairness in IoT Multihop LoRa Networks. MDPI Sensors 22(23, 9332)</span></li><li><span class="no">[11]</span> <span class="tx">Nam, Y ; Bang, J ; Choi, H ; Shin, Y ; Lee, E. (2022, Nov). Cooperative Content Precaching Scheme Based on the Mobility Information of Vehicles in Intermittently Connected Vehicular Networks. MDPI Electronics 11(22, 3663)</span></li><li><span class="no">[10]</span> <span class="tx">Nam, Y ; Choi, H ; Shin, Y ; Park, S ; Lee, E. (2022, Oct). Expected Area-Based Real-Time Routing Protocol for Supporting Mobile Sinks in Wireless Sensor Networks. MDPI Electronics 11(20, 3350)</span></li><li><span class="no">[9]</span> <span class="tx">Nam, Y ; Choi, H ; Shin, Y ; Mugerwa, D ; Lee, E. (2022, Sep). RSU-Aided Optimal Member Replacement Scheme with Improved Mobility Prediction for Vehicular Clouds in VANETs. MDPI Electronics 11(17, 2787)</span></li><li><span class="no">[8]</span> <span class="tx">Choi, H ; Nam, Y ; Shin, Y ; Lee, E. (2022, Nov). The partial cloud member replacement for reconstructing vehicular clouds in VANETs: Reactive and proactive schemes. Ad Hoc Networks 136(102959)</span></li><li><span class="no">[7]</span> <span class="tx">Choi, H ; Nam, Y ; Shin, Y ; Jung, K ; Lee, E. (2022, Jul). Design and Evaluation of Schemes for Replacing Multiple Member Vehicles in Vehicular Clouds. MDPI Electronics 11(13, 2085)</span></li><li><span class="no">[6]</span> <span class="tx">Oh, S ; Park, S ; Shin, Y ; Lee, E. (2022, May). Optimized Distributed Proactive Caching Based on Movement Probability of Vehicles in Content-Centric Vehicular Networks. MDPI Sensors 22(9, 3346)</span></li><li><span class="no">[5]</span> <span class="tx">Shin, Y ; Choi, HS ; Nam, Y ; Cho, H ; Lee, E. (2022, Sep). Particle Swarm Optimization Video Streaming Service in Vehicular Ad-Hoc Networks. IEEE Access 10(102710-102723)</span></li><li><span class="no">[4]</span> <span class="tx">Cho, H ; Oh, S ; Shin, Y ; Lee, E. (2021, Nov) Energy-Efficient and Disjoint Multipath Using Face Routing in Wireless Sensor Networks. MDPI Energies 14(22, 7823)</span></li><li><span class="no">[3]</span> <span class="tx">Shin, Y ; Choi, H ; Nam, Y ; Lee, E. (2021, Nov). Video Packet Distribution Scheme for Multimedia Streaming Services in VANETs. MDPI Sensors 21(21, 7386)</span></li><li><span class="no">[2]</span> <span class="tx">Nam, Y ; Choi, H ; Shin, Y ; Lee, E ; Lee, EK. (2021, Aug). Adaptive Content Precaching Scheme Based on the Predictive Speed of Vehicles in Content-Centric Vehicular Networks. MDPI Sensors 21(16, 5376)</span></li><li><span class="no">[1]</span> <span class="tx">Shin, Y ; Choi, H ; Nam, Y ; Lee, E. (2020, Oct). Data delivery protocol using the trajectory information on a road map in VANETs. Ad Hoc Networks 107(102260)</span></li></ol>
+    <h4 class="caps" lang="en">INTERNATIONAL CONFERENCE PAPERS</h4>
+    <ol class="refs"><li><span class="no">[8]</span> <span class="tx">Nam, Y ; Choi, H ; Shin, Y ; Mugerwa, D ; Lee, E. (2023, Jan). Delay Tolerable Precaching Scheme in Content-Centric Vehicular Networks. IEEE 20th Consumer Communications and Networking Conference (CCNC)</span></li><li><span class="no">[7]</span> <span class="tx">Nam, Y ; Choi, H ; Bang, J ; Shin, Y ; Lee, E. (2023, Jan). Set Ranking-Based Precaching Protocol in Vehicular Ad hoc Networks. IEEE 20th Consumer Communications and Networking Conference (CCNC)</span></li><li><span class="no">[6]</span> <span class="tx">Mugerwa, D ; Nam, Y ; Cho, H ; Choi, H ; Shin, Y ; Lee, E. (2022, Jul). Implicit Multi-hop Communication Scheme based on Overhearing in IoT LoRa Networks. 13th International Conference on Ubiquitous and Future Networks (ICUFN)</span></li><li><span class="no">[5]</span> <span class="tx">Yim, J ; Bang, J ; Nam, Y ; Shin, Y ; Lee, E (Lee, Euisin). (2019, Sep). Efficient Multipath Routing Protocol Against Path Failures in Wireless Sensor Networks. 12th IFIP Wireless and Mobile Networking Conference (WMNC)</span></li><li><span class="no">[4]</span> <span class="tx">Kim, H ; Shin, Y ; Lee, Y ; Shin, D ; Lee, E.  (2018, Nov) Event-to-Sink Multipath Routing Protocol for Event Reliability in Wireless Sensor Networks. 24th Asia Pacific Conference on Communications-APCC</span></li><li><span class="no">[3]</span> <span class="tx">Shin, Y ; Choi, HS ; Nam, Y ; Lee, E. (2018, Jul). Efficient Data Delivery Protocol using Vehicle Mobility Information in VANETs. 10th International Conference on Ubiquitous and Future Networks (ICUFN)</span></li><li><span class="no">[2]</span> <span class="tx">Shin, Y ; Lee, H ; Choi, HS ; Lee, E. (2017, Dec). Multipath Construction and Management Protocol for Mobile Sinks in Wireless Sensor Networks. 23rd Asia-Pacific Conference on Communications (APCC) - Bridging the Metropolitan and the Remote</span></li><li><span class="no">[1]</span> <span class="tx">Lee, J ; Yoon, M ; Lee, HK ; Shin, Y ; Lee, E ; Gerla, M. (2016,Sep).  Energy-Efficient Mobile Groupcasting Protocol in Wireless Sensor Networks. 27th IEEE Annual International Symposium on Personal, Indoor, and Mobile Radio Communications (PIMRC)</span></li></ol>
+  </div>
+</section>
+<section class="pf-sec" id="pf-F" aria-labelledby="pf-F-h">
+  <h3 id="pf-F-h">산학협력(연구과제)</h3>
+  <div class="pf-body">
+    <p>2020-03. ~ 2023-02. 모바일 엣지 컴퓨팅을 통한 차량 컨텐츠 캐싱 연구. [한국연구재단]</p>
+    <p>2022-03. ~ 2026-02. 차량 네트워크에서 머신러닝 기반 협력적 콘텐츠 프리캐싱에 관한 연구. [한국연구재단]</p>
+  </div>
+</section>
+
+        <div class="pf-actions">
+          <a class="btn-list" href="faculty.html">목록으로</a>
+        </div>
+      </article>
+
+      <aside class="pageinfo" aria-label="페이지 정보">
+        <dl>
+          <div><dt>담당부서</dt><dd>스마트IT학부</dd></div>
+          <div><dt>연락처</dt><dd>043-649-1275</dd></div>
+          <div><dt>최종수정일</dt><dd>2024-10-26</dd></div>
+        </dl>
+        <form class="survey" onsubmit="return false">
+          <b id="sv-q">이 페이지에서 제공하는 정보에 대하여 만족하시나요?</b>
+          <span class="sv-opts" role="radiogroup" aria-labelledby="sv-q">
+            <label><input type="radio" name="point" value="5">매우만족</label>
+            <label><input type="radio" name="point" value="4">만족</label>
+            <label><input type="radio" name="point" value="3">보통</label>
+            <label><input type="radio" name="point" value="2">불만족</label>
+            <label><input type="radio" name="point" value="1">매우불만족</label>
+          </span>
+          <button type="submit">등록하기</button>
+        </form>
+      </aside>
+    </main>
+  </div>
+</div>
+
+<footer class="foot">
+  <div class="foot-in">
+    <b>세명대학교 스마트IT학부</b>
+    <span>27136 충청북도 제천시 세명로 65 (신월동) 세명대학교 스마트IT학부 첨단정보학관 423호 · TEL 043-649-1747 · FAX 043-649-1747</span>
+    <nav aria-label="바닥글 링크">
+      <a href="https://www.semyung.ac.kr/kor/sitemap_15.do" target="_blank" rel="noopener">개인정보처리방침</a>
+      <a href="https://www.semyung.ac.kr/kor/sitemap_16.do" target="_blank" rel="noopener">이메일무단수집거부</a>
+      <a href="https://www.semyung.ac.kr/kor/sub01_06_02.do" target="_blank" rel="noopener">찾아오시는 길</a>
+      <a href="https://www.semyung.ac.kr/smartit/sitemap_11.do" target="_blank" rel="noopener">사이트맵</a>
+    </nav>
+    <span class="copy">COPYRIGHT (C) 2017 Semyung University ALL RIGHTS RESERVED.</span>
+  </div>
+</footer>
+
+<details class="proto">
+  <summary>PROTOTYPE 09 · 서브</summary>
+  <div class="in">
+<!--PROTO:BEGIN-->
+    <div class="row" role="group" aria-label="서브 화면: SMIT 소개">
+      <a href="about.html">학부소개</a><a href="greeting.html">인사말</a><a href="history.html">연혁</a><a href="faculty.html" aria-current="true">교수소개</a>
+    </div>
+    <div class="row" role="group" aria-label="서브 화면: SMIT 교육">
+      <a href="goal.html">교육목표</a><a href="curriculum.html">교육과정</a><a href="roadmap.html">체계도</a>
+    </div>
+    <div class="row" role="group" aria-label="서브 화면: SMIT 취업">
+      <a href="employ.html">SMIT 취업</a><a href="recruit.html">채용공고</a><a href="career.html">진로와 취업</a>
+    </div>
+    <div class="row" role="group" aria-label="서브 화면: SMIT 소식">
+      <a href="notice.html">공지 목록</a><a href="notice.html#n486428">공지 본문</a><a href="gallery.html">갤러리</a><a href="gallery.html#g486440">갤러리 본문</a><a href="contest.html">경진대회</a><a href="club.html">동아리</a>
+    </div>
+    <div class="row" role="group" aria-label="서브 화면: SMIT 입학">
+      <a href="admission.html">입학정보</a>
+    </div>
+<!--PROTO:END-->
+    <div class="row"><button type="button" id="p-sweep" aria-pressed="true">빛줄 켬</button></div>
+  </div>
+</details>
+<script src="sub.js"></script>
+</body>
+</html>
