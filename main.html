@@ -1353,7 +1353,7 @@ addEventListener('error', e => { const t = e.target; if (t && t.tagName === 'SCR
   </nav>
   <button class="menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="nav">메뉴</button>
 </header>
-<div class="proto-badge">PROTOTYPE 07 · 참고안</div>
+<!-- 세션 23(10-19 사용자 '검토 도구는 완성했으니 삭제'): 'PROTOTYPE 07 · 참고안' 표지와 '이펙트 비교' 판을 뺐다(남은 .proto-badge·.fx-panel CSS는 가리키는 요소가 없다) -->
 <nav class="progress" id="progress" aria-label="장 이동">
   <a href="#top" data-i="0"><span>처음</span><i>00</i></a>
   <a href="#about" data-i="1"><span>SMIT 소개</span><i>01</i></a>
@@ -1361,14 +1361,6 @@ addEventListener('error', e => { const t = e.target; if (t && t.tagName === 'SCR
   <a href="#info" data-i="3"><span>소식·취업</span><i>03</i></a>
   <a href="#admit" data-i="4"><span>SMIT 입학</span><i>04</i></a>
 </nav>
-<div class="fx-panel" id="fx-panel" role="group" aria-label="이펙트 비교">
-  <span class="fx-title">이펙트 비교</span>
-  <button type="button" data-fx="gpgpu" aria-pressed="true"><b>1</b>링 흐름 입자</button>
-  <button type="button" data-fx="refract" aria-pressed="true"><b>2</b>굴절 유리</button>
-  <button type="button" data-fx="fluid" aria-pressed="true"><b>3</b>마우스 유체</button>
-  <button type="button" data-fx="real" aria-pressed="true"><b>4</b>실사 모델</button>
-  <button type="button" data-fx="aurora" aria-pressed="true"><b>5</b>오로라 배경</button>
-</div>
 
 <div class="hero-copy">
   <div class="eyebrow">SEMYUNG UNIVERSITY · SMART IT</div>
@@ -4439,19 +4431,15 @@ document.querySelectorAll('#progress a').forEach(a => a.addEventListener('click'
 const menuBtn = document.getElementById('menu-btn'), nav = document.getElementById('nav');
 menuBtn.addEventListener('click', () => { const o = nav.classList.toggle('is-open'); menuBtn.setAttribute('aria-expanded', String(o)); });
 
-// ───────────────────────── 이펙트 비교 패널
-const fxButtons = [...document.querySelectorAll('#fx-panel button')];
+// ───────────────────────── 이펙트 켜고 끄기(세션 23: 화면의 '이펙트 비교' 판과 키보드 1~5 켜고 끄기를 뺐다 — 비교는 주소 ?fx= 시험 인자만)
 function setFx(k, on) {
   if (!(k in fx)) return;
   fx[k] = on;
-  fxButtons.forEach(b => { if (b.dataset.fx === k) b.setAttribute('aria-pressed', String(on)); });
   if (k === 'refract') applyGlass();
 }
-fxButtons.forEach(b => { b.setAttribute('aria-pressed', String(fx[b.dataset.fx])); b.addEventListener('click', () => setFx(b.dataset.fx, !fx[b.dataset.fx])); });
-addEventListener('keydown', e => { if (e.target.closest && e.target.closest('input, textarea')) return; const i = ['1', '2', '3', '4', '5'].indexOf(e.key); if (i >= 0) setFx(FX_KEYS[i], !fx[FX_KEYS[i]]); });
 applyGlass();
-if (!particles) { fx.gpgpu = false; fxButtons[0].disabled = true; fxButtons[0].setAttribute('aria-pressed', 'false'); }
-if (!REAL.ok) { fx.real = false; fxButtons[3].disabled = true; fxButtons[3].setAttribute('aria-pressed', 'false'); }
+if (!particles) fx.gpgpu = false;
+if (!REAL.ok) fx.real = false;
 
 // 프레임 속도 측정(시험용): 최근 60프레임 평균
 const frameTimes = [];
@@ -4863,7 +4851,7 @@ function heroFrame(t, dt) {
   camera.updateMatrixWorld(); warp.update(warp.hero, camera, inside ? 0 : wA, dt);   // 터널 빛줄기를 이번 프레임 카메라 축에 붙인다
 }
 // ───────────────────────── 성능 표시창(모바일 최적화 준비, 2026-10-15) — 실기기 기준값을 받기 위한 시험 도구. 디자인 요소가 아니다(업체 구현 대상 아님)
-// 켜기: 주소에 ?hud=1 또는 오른쪽 위 PROTOTYPE 배지를 1초 안에 세 번 탭. 휴대폰에서 켠 화면을 캡처해 보내면 된다.
+// 켜기: 주소에 ?hud=1(세션 23: PROTOTYPE 배지를 뺐으므로 배지 세 번 탭은 동작하지 않는다). 휴대폰에서 켠 화면을 캡처해 보내면 된다.
 // 보이는 값: 최근 1초 평균 초당 프레임·가장 느린 프레임 · 한 프레임 그리기 호출·삼각형 · 기하·텍스처·셰이더 수 · 픽셀 비율(쓰는 값/기기 값)·화면 크기 · 지금 장(view·tr·g) · GPU 이름
 const perfHud = { on: false, el: null, gpu: '', ft: [], prev: 0, shown: 0, calls: 0, tris: 0 };
 function setHud(on) {

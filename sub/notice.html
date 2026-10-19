@@ -357,29 +357,6 @@ addEventListener('pagereveal', e => {
   </div>
 </footer>
 
-<details class="proto">
-  <summary>PROTOTYPE 09 · 서브</summary>
-  <div class="in">
-<!--PROTO:BEGIN-->
-    <div class="row" role="group" aria-label="서브 화면: SMIT 소개">
-      <a href="about.html">학부소개</a><a href="greeting.html">인사말</a><a href="history.html">연혁</a><a href="faculty.html">교수소개</a>
-    </div>
-    <div class="row" role="group" aria-label="서브 화면: SMIT 교육">
-      <a href="goal.html">교육목표</a><a href="curriculum.html">교육과정</a><a href="roadmap.html">체계도</a>
-    </div>
-    <div class="row" role="group" aria-label="서브 화면: SMIT 취업">
-      <a href="employ.html">SMIT 취업</a><a href="recruit.html">채용공고</a><a href="career.html">진로와 취업</a>
-    </div>
-    <div class="row" role="group" aria-label="서브 화면: SMIT 소식">
-      <a href="notice.html" id="p-list" aria-current="page">공지 목록</a><a href="notice.html#n486428" id="p-view">공지 본문</a><a href="gallery.html">갤러리</a><a href="gallery.html#g486440">갤러리 본문</a><a href="contest.html">경진대회</a><a href="club.html">동아리</a>
-    </div>
-    <div class="row" role="group" aria-label="서브 화면: SMIT 입학">
-      <a href="admission.html">입학정보</a>
-    </div>
-<!--PROTO:END-->
-    <div class="row"><button type="button" id="p-sweep" aria-pressed="true">빛줄 켬</button><button type="button" id="p-raw" aria-pressed="false">본문 원문</button></div>
-  </div>
-</details>
 <script src="sub.js"></script>
 <script>
 // 목록 ↔ 본문: 주소 #n<글 번호>가 본문 구역(section[data-nid])에 있으면 그 본문 화면. 뒤로 가기로 목록에 돌아온다. 화면을 바꾸면 종이 맨 위로 옮기고 제목에 초점을 둔다
@@ -393,11 +370,11 @@ addEventListener('pagereveal', e => {
     const title = view && view.querySelector('.art-head h2');
     list.hidden = isView; views.forEach(v => { v.hidden = v !== view; });
     document.title = isView ? title.textContent + ' · ' + base : base;
-    // 조작판 '공지 본문'은 486428 한 글을 가리킨다 → 그 글일 때만 현재 화면 표시
-    const onP = isView && pView.getAttribute('href').endsWith('#n' + view.dataset.nid);
-    pList.toggleAttribute('aria-current', !isView); pView.toggleAttribute('aria-current', onP);
-    if (pList.hasAttribute('aria-current')) pList.setAttribute('aria-current', 'page');
-    if (pView.hasAttribute('aria-current')) pView.setAttribute('aria-current', 'page');
+    // 조작판 '공지 본문'은 486428 한 글을 가리킨다 → 그 글일 때만 현재 화면 표시(세션 23: 1차본은 조작판을 빼므로 없으면 건너뛴다 — gallery.html과 같음)
+    if (pList && pView) { const onP = isView && pView.getAttribute('href').endsWith('#n' + view.dataset.nid);
+      pList.toggleAttribute('aria-current', !isView); pView.toggleAttribute('aria-current', onP);
+      if (pList.hasAttribute('aria-current')) pList.setAttribute('aria-current', 'page');
+      if (pView.hasAttribute('aria-current')) pView.setAttribute('aria-current', 'page'); }
     if (!first) {
       document.querySelector('.paper').scrollIntoView({ block: 'start' });
       if (isView) title.focus({ preventScroll: true });
@@ -413,7 +390,7 @@ addEventListener('pagereveal', e => {
   document.querySelectorAll('.pager a').forEach(a => a.addEventListener('click', e => e.preventDefault()));
   // 본문 원문 / 서식 예시
   const raw = document.getElementById('p-raw');
-  raw.addEventListener('click', () => {
+  if (raw) raw.addEventListener('click', () => {
     const on = raw.getAttribute('aria-pressed') !== 'true';
     raw.setAttribute('aria-pressed', String(on));
     document.querySelector('[data-mode="fmt"]').hidden = on; document.querySelector('[data-mode="raw"]').hidden = !on;
