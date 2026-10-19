@@ -7,7 +7,7 @@
   const MENU = [
     { h: 'SMIT 소개', home: 'about.html', items: [['학부소개', 'about.html'], ['학부장 인사말', 'greeting.html'], ['학부연혁', 'history.html'], ['교수소개', 'faculty.html']] },
     { h: 'SMIT 교육', home: 'goal.html', items: [['교육목표', 'goal.html'], ['교육과정', 'curriculum.html'], ['전공교육 체계도', 'roadmap.html']] },
-    { h: 'SMIT 취업', home: 'employ.html', items: [['채용공고', 'recruit.html'], ['진로와 취업', 'career.html']] },
+    { h: 'SMIT 취업', home: 'recruit.html', items: [['채용공고', 'recruit.html'], ['진로와 취업', 'career.html']] },   // 세션 23(10-19 사용자): 대메뉴 = 채용공고로 바로(2024년 글 2개뿐인 'SMIT 취업' 게시판 쪽 employ.html은 뺐다)
     { h: 'SMIT 소식', home: 'notice.html', items: [['공지사항', 'notice.html'], ['갤러리', 'gallery.html'], ['경진대회', 'contest.html'], ['동아리', 'club.html']] },
     { h: 'SMIT 입학', home: 'admission.html', items: [['SMIT 입학정보', 'admission.html'], ['입학안내', CUR + '/ipsi.do']] },
   ];

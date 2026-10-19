@@ -61,7 +61,9 @@ addEventListener('pagereveal', e => {
 <!-- 시안 9 서브 화면: 전공교육 체계도. 본문 = 현행 전공교육 체계도 원문(https://www.semyung.ac.kr/smartit/sub02_06.do, 2026-10-16 수집) — 그림 1장
      → tools/extract_subpages.py → tools/build_subpages.py가 만든다(손으로 고치지 않는다). 머리 띠 그림 = 시안 8 유리 SMU(ch2, proto-08-glass/media 사본).
      피드백 9(2026-10-18, 사용자 승인): 그림을 손으로 바꿨다 — 2025학년도 정시모집요강 66쪽 한 쪽 전체 → 2026학년도 정시모집요강 57쪽의 '교육과정 체계도'+'주요 취업현황'만
-     (tools/make_roadmap_s21.py · 원 PDF 00_자료/근거-2026-10-18/: 벡터 쪽 400dpi로 그려 자름 · 위쪽 홍보 칸·사진·마스코트 뺌). build_subpages.py를 다시 돌리면 옛 그림으로 돌아가니 다시 돌리지 않는다. -->
+     (tools/make_roadmap_s21.py · 원 PDF 00_자료/근거-2026-10-18/: 벡터 쪽 400dpi로 그려 자름 · 위쪽 홍보 칸·사진·마스코트 뺌). build_subpages.py를 다시 돌리면 옛 그림으로 돌아가니 다시 돌리지 않는다.
+     세션 23(2026-10-19 사용자 "원본 홈페이지에 있던 브로슈어 사진을 자르지 말고 전체로, 크게 보기 기능은 없애줘"): 그림 = 현행 sub02_06.png 한 쪽 전체(tools/make_roadmap_s23.py)로 되돌리고
+     '큰 이미지로 보기' 링크를 뺐다. 2026 판 그림·이 쪽 이전 판 = _backup/s23/. -->
 <body data-page="roadmap">
 <a class="skip" href="#main">본문 바로가기</a>
 <section class="band" aria-label="머리 띠">
@@ -78,7 +80,7 @@ addEventListener('pagereveal', e => {
     <nav class="gnb" aria-label="주 메뉴">
       <a href="about.html">SMIT 소개</a>
       <a href="goal.html" aria-current="true">SMIT 교육</a>
-      <a href="employ.html">SMIT 취업</a>
+      <a href="recruit.html">SMIT 취업</a>
       <a href="notice.html">SMIT 소식</a>
       <a href="admission.html">SMIT 입학</a>
     </nav>
@@ -109,8 +111,7 @@ addEventListener('pagereveal', e => {
     <main class="main" id="main">
       <section class="sec" aria-label="전공교육 체계도 그림">
         <figure class="src-fig">
-          <img src="media/sub/roadmap.webp" alt="스마트IT학부 교육과정 체계도. 인공지능응용 전문가 — 자격증: IBM 머신러닝 및 AI 응용 개발 전문가, AWS 클라우드 자격증, 무인동력비행장치 조종자격증 · 주요 과목: 스마트모빌리티인공지능실습, 차세대인공지능, 기계학습프레임워크, 데이터베이스, 빅데이터기초및실습, 드론기초및코딩실습. 차세대정보통신 전문가 — 자격증: 정보통신기사, CCNA/CCNP, 네트워크관리사, 정보보안기사 · 주요 과목: 통신이론및실습, 인공지능사이버보안, 정보통신인공지능, 정보보호이론및실습, 통신이론및실습, 고급네트워킹이론및실습. 소프트웨어개발 전문가 — 자격증: 정보처리기사, 리눅스마스터, 스마트앱마스터, 자바(OCJP, SCJP) · 주요 과목: 스마트모바일컴퓨팅, AI응용플랫폼실습, 스마트모바일프로그래밍실습, 웹프로그래밍실습, AR/VR이론및실습, 소프트웨어설계. 우리 학과 주요 취업현황: Naver Cloud, SK하이닉스, 신세계INC, 현대IT&amp;E, 여주시청, 연세대병원, 분당서울대병원, SK쉴더스, CJB청주방송, 연세대/한양대대학원" width="1800" height="665" decoding="async">
-          <figcaption><a href="media/sub/orig/roadmap.png" target="_blank" rel="noopener">큰 이미지로 보기<span class="sr">(원본 그림, 새 창)</span><svg class="ext" viewBox="0 0 12 12" aria-hidden="true"><path d="M4.5 2.5h5v5M9.5 2.5 3 9" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></a></figcaption>
+          <img src="media/sub/roadmap.webp" alt="전공능력 체계도 — 스마트IT학부 소개와 교육과정 체계도(2025학년도 정시모집요강 66쪽 한 쪽 전체)" width="1800" height="2546" decoding="async">
         </figure>
       </section>
 
